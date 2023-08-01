@@ -75,6 +75,12 @@ jobs:
             version: "19-alpine3.17"
             dockerfile: 1-amazoncorretto/19-alpine3.17/Dockerfile
             context: 1-amazoncorretto/19-alpine3.17
+            version_arg: "19"
+          - name: rust
+            version: "1.71.0"
+            dockerfile: 1-rust/Dockerfile
+            context: 1-rust
+            version_arg: "1.71.0"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -106,6 +112,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           context: ${{ matrix.context }}
           build-args: |
+            VERSION=${{ matrix.version_arg }}
             CACHE_BUST=${{ github.run_id }}
           platforms: linux/amd64,linux/arm64
           pull: true
