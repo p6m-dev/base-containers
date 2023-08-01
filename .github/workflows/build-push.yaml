@@ -18,11 +18,11 @@ jobs:
       matrix:
         include:
           - name: alpine
-            version: "3.17"
+            version_tag: "3.17"
             dockerfile: 0-alpine/3.17/Dockerfile
             context: 0-alpine/3.17
           - name: debian
-            version: bullseye
+            version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
     steps:
@@ -35,11 +35,11 @@ jobs:
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}
           tags: |
-            type=raw,value=${{ matrix.version }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ matrix.version }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=sha,prefix=${{ matrix.version }}-
-            type=sha,prefix=${{ matrix.version }}-,format=long
-            type=schedule,pattern=${{ matrix.version }}-{{date 'YYYYMMDD'}}
+            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha,prefix=${{ matrix.version_tag }}-
+            type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -62,8 +62,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version}}-buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version}}-buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache,mode=max
   lang:
     needs:
       - base
@@ -72,15 +72,20 @@ jobs:
       matrix:
         include:
           - name: amazoncorretto
-            version: "19-alpine3.17"
+            version_tag: 19-alpine3.17
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
             context: 1-amazoncorretto/alpine3.17
             version_arg: "19"
           - name: rust
-            version: "1.71.0-bullseye"
+            version_tag: 1.71.0-bullseye
             dockerfile: 1-rust/bullseye/Dockerfile
             context: 1-rust/bullseye
             version_arg: "1.71.0"
+          - name: rust
+            version_tag: bullseye
+            dockerfile: 1-rust/bullseye/Dockerfile
+            context: 1-rust/bullseye
+            version_arg: stable
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -91,11 +96,11 @@ jobs:
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}
           tags: |
-            type=raw,value=${{ matrix.version }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ matrix.version }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=sha,prefix=${{ matrix.version }}-
-            type=sha,prefix=${{ matrix.version }}-,format=long
-            type=schedule,pattern=${{ matrix.version }}-{{date 'YYYYMMDD'}}
+            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha,prefix=${{ matrix.version_tag }}-
+            type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -119,5 +124,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version}}-buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version}}-buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache,mode=max
