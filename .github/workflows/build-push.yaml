@@ -73,13 +73,13 @@ jobs:
         include:
           - name: amazoncorretto
             version: "19-alpine3.17"
-            dockerfile: 1-amazoncorretto/19-alpine3.17/Dockerfile
-            context: 1-amazoncorretto/19-alpine3.17
+            dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
+            context: 1-amazoncorretto/alpine3.17
             version_arg: "19"
           - name: rust
-            version: "1.71.0"
-            dockerfile: 1-rust/Dockerfile
-            context: 1-rust
+            version: "1.71.0-bullseye"
+            dockerfile: 1-rust/bullseye/Dockerfile
+            context: 1-rust/bullseye
             version_arg: "1.71.0"
     steps:
       - name: Checkout
