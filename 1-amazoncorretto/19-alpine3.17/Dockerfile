@@ -6,8 +6,7 @@ FROM naxgrp/alpine:3.17
 
 CMD ["/bin/sh"]
 
-RUN /bin/sh -c \
-    wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads/resources/licenses/alpine/THIRD-PARTY-LICENSES-20200824.tar.gz && \
+RUN wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads/resources/licenses/alpine/THIRD-PARTY-LICENSES-20200824.tar.gz && \
     echo "82f3e50e71b2aee21321b2b33de372feed5befad6ef2196ddec92311bc09becb /THIRD-PARTY-LICENSES-20200824.tar.gz" | sha256sum -c - && \
     tar x -ovzf THIRD-PARTY-LICENSES-20200824.tar.gz && rm -rf THIRD-PARTY-LICENSES-20200824.tar.gz && \
     wget -O /etc/apk/keys/amazoncorretto.rsa.pub https://apk.corretto.aws/amazoncorretto.rsa.pub && \
