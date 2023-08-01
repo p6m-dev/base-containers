@@ -1,6 +1,7 @@
 FROM alpine:3.17 as pkgsum
 
 ARG CACHE_BUST
+ENV CACHE_BUST=${CACHE_BUST}
 
 # Make sure this command matches the one below EXACTLY
 RUN apk update && \

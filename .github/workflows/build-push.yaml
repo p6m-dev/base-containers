@@ -21,6 +21,10 @@ jobs:
             version: "3.17"
             dockerfile: 0-alpine/3.17/Dockerfile
             context: 0-alpine/3.17
+          - name: debian
+            version: bullseye
+            dockerfile: 0-debian/bullseye/Dockerfile
+            context: 0-debian/bullseye
     steps:
       - name: Checkout
         uses: actions/checkout@v3
