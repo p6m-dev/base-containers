@@ -23,5 +23,5 @@ RUN apk update && \
 
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
 ENV BASE_IMAGE_OS "alpine"
-ENV BASE_IMAGE_VERSION "3.17"
+ENV BASE_IMAGE_OS_VERSION "3.17"
 ENV BASE_IMAGE_PKGSUM_APK "$(cat /var/lib/apk/sha256sum)"

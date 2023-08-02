@@ -29,5 +29,5 @@ RUN apt-get update && \
 
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
 ENV BASE_IMAGE_OS "debian"
-ENV BASE_IMAGE_VERSION "bullseye"
+ENV BASE_IMAGE_OS_VERSION "bullseye"
 ENV BASE_IMAGE_PKGSUM_DPKG "$(cat /var/lib/dpkg/sha256sum)"
