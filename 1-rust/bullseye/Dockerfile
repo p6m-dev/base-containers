@@ -29,3 +29,8 @@ RUN set -eux; \
     rustup --version; \
     cargo --version; \
     rustc --version;
+
+RUN apt-get update && \
+    apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
