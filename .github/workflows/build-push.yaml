@@ -126,3 +126,56 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache,mode=max
+  app:
+    needs:
+      - base
+      - lang
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: cargo-chef
+            version_tag: latest-rust-1.68.0
+            dockerfile: 2-cargo-chef/rust-bullseye/Dockerfile
+            context: 2-cargo-chef/rust-bullseye
+            version_arg: "1.68.0"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}
+          tags: |
+            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha,prefix=${{ matrix.version_tag }}-
+            type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
+      - name: Build and push
+        id: build-push
+        uses: docker/build-push-action@v3
+        with:
+          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          build-args: |
+            VERSION=${{ matrix.version_arg }}
+            CACHE_BUST=${{ github.run_id }}
+          platforms: linux/amd64,linux/arm64
+          pull: true
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:${{ matrix.version_tag }}-buildcache,mode=max
