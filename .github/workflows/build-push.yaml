@@ -135,10 +135,11 @@ jobs:
       matrix:
         include:
           - name: cargo-chef
-            version_tag: latest-rust-1.68.0
+            version_tag: "0.1-bullseye"
             dockerfile: 2-cargo-chef/rust-bullseye/Dockerfile
             context: 2-cargo-chef/rust-bullseye
-            version_arg: "1.68.0"
+            version_arg: "^0.1" # version of cargo-chef
+            image_tag_arg: "bullseye" # latest version of rust
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -171,6 +172,7 @@ jobs:
           context: ${{ matrix.context }}
           build-args: |
             VERSION=${{ matrix.version_arg }}
+            IMAGE_TAG=${{ matrix.image_tag_arg }}
             CACHE_BUST=${{ github.run_id }}
           platforms: linux/amd64,linux/arm64
           pull: true

@@ -1,4 +1,5 @@
-FROM naxgrp/rust:bullseye
+ARG IMAGE_TAG
+FROM naxgrp/rust:${IMAGE_TAG}
 ARG VERSION
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 
