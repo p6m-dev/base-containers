@@ -12,12 +12,14 @@ RUN apt-get update && \
 
 # Calculate the sum of all installed packages, which will override Dockercache if something changed
 RUN debsums --silent --all --generate=missing
-RUN cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/info/sha256sum
+RUN cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/sha256sum
 
 FROM debian:bullseye
 
 # This will override the cache if any packages were upgraded
-COPY --from=pkgsum /var/lib/dpkg/info/sha256sum /var/lib/dpkg/info/sha256sum
+COPY --from=pkgsum /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
+
+RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -26,3 +28,6 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
+ENV BASE_IMAGE_OS "debian"
+ENV BASE_IMAGE_VERSION "bullseye"
+ENV BASE_IMAGE_PKGSUM_DPKG "$(cat /var/lib/dpkg/sha256sum)"

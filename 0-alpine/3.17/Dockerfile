@@ -15,8 +15,13 @@ FROM alpine:3.17
 # This will override the cache if any packages were upgraded
 COPY --from=pkgsum /var/lib/apk/sha256sum /var/lib/apk/sha256sum
 
+RUN echo "PKGSUM is $(cat /var/lib/apk/sha256sum)"
+
 # Make sure this command matches the one above EXACTLY
 RUN apk update && \
     apk upgrade --no-cache
 
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
+ENV BASE_IMAGE_OS "alpine"
+ENV BASE_IMAGE_VERSION "3.17"
+ENV BASE_IMAGE_PKGSUM_APK "$(cat /var/lib/apk/sha256sum)"
