@@ -19,4 +19,4 @@ COPY --from=pkgsum /var/lib/apk/sha256sum /var/lib/apk/sha256sum
 RUN apk update && \
     apk upgrade --no-cache
 
-ENV BASE_IMAGE_MAINTAINER=naxgrp
+ENV BASE_IMAGE_MAINTAINER "nax-platform"

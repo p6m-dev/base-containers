@@ -25,4 +25,4 @@ RUN apt-get update && \
     ca-certificates debsums gpg libssl-dev tzdata wget \
     && rm -rf /var/lib/apt/lists/*
 
-ENV BASE_IMAGE_MAINTAINER=naxgrp
+ENV BASE_IMAGE_MAINTAINER "nax-platform"
