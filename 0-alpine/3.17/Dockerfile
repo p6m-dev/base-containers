@@ -18,3 +18,5 @@ COPY --from=pkgsum /var/lib/apk/sha256sum /var/lib/apk/sha256sum
 # Make sure this command matches the one above EXACTLY
 RUN apk update && \
     apk upgrade --no-cache
+
+ENV BASE_IMAGE_MAINTAINER=naxgrp

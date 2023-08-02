@@ -24,3 +24,5 @@ RUN apt-get update && \
     apt-get install -y \
     ca-certificates debsums gpg libssl-dev tzdata wget \
     && rm -rf /var/lib/apt/lists/*
+
+ENV BASE_IMAGE_MAINTAINER=naxgrp
