@@ -72,6 +72,11 @@ jobs:
       matrix:
         include:
           - name: amazoncorretto
+            version_tag: 17-alpine3.17
+            dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
+            context: 1-amazoncorretto/alpine3.17
+            version_arg: "17"
+          - name: amazoncorretto
             version_tag: 19-alpine3.17
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
             context: 1-amazoncorretto/alpine3.17
