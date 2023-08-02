@@ -140,6 +140,7 @@ jobs:
             context: 2-cargo-chef/rust-bullseye
             version_arg: "^0.1" # version of cargo-chef
             image_tag_arg: "bullseye" # latest version of rust
+            variants: "linux/amd64"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -174,7 +175,7 @@ jobs:
             VERSION=${{ matrix.version_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
             CACHE_BUST=${{ github.run_id }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.variants }}
           pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}

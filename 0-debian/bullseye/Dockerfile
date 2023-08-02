@@ -19,6 +19,8 @@ FROM debian:bullseye
 # This will override the cache if any packages were upgraded
 COPY --from=pkgsum /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
 
+RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -28,6 +30,4 @@ RUN apt-get update && \
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
 ENV BASE_IMAGE_OS "debian"
 ENV BASE_IMAGE_OS_VERSION "bullseye"
-
-RUN echo "PKGSUM is $(cat /var/lib/apk/sha256sum)"
-RUN echo BASE_IMAGE_PKGSUM_APK=$(cat /var/lib/apk/sha256sum) >> /etc/environment
+ENV BASE_IMAGE_OS_PKGSUM_FILE="/var/lib/dpkg/sha256sum"
