@@ -86,6 +86,11 @@ jobs:
             dockerfile: 1-nginx/bullseye/Dockerfile
             context: 1-nginx/bullseye
             version_arg: "1"
+          - name: node
+            version_tag: 16-bullseye
+            dockerfile: 1-node/bullseye/Dockerfile
+            context: 1-node/bullseye
+            version_arg: "16"
           - name: rust
             version_tag: 1.71.0-bullseye
             dockerfile: 1-rust/bullseye/Dockerfile
