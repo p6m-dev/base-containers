@@ -81,6 +81,11 @@ jobs:
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
             context: 1-amazoncorretto/alpine3.17
             version_arg: "19"
+          - name: nginx
+            version_tag: 1-bullseye
+            dockerfile: 1-nginx/bullseye/Dockerfile
+            context: 1-nginx/bullseye
+            version_arg: "1"
           - name: rust
             version_tag: 1.71.0-bullseye
             dockerfile: 1-rust/bullseye/Dockerfile
