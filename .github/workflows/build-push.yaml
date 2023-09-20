@@ -112,6 +112,11 @@ jobs:
             dockerfile: 1-rust/bullseye/Dockerfile
             context: 1-rust/bullseye
             version_arg: stable
+          - name: aws-cli
+            version_tag: latest
+            dockerfile: 1-aws-cli/al2/Dockerfile
+            conetxt: 1-aws-cli/al2
+            version_arg: latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
