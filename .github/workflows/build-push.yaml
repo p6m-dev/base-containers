@@ -116,7 +116,7 @@ jobs:
             version_tag: latest
             dockerfile: 1-aws-cli/al2/Dockerfile
             conetxt: 1-aws-cli/al2
-            version_arg: latest
+            version_arg: "latest"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
