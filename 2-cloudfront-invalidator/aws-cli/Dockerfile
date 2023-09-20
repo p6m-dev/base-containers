@@ -1,8 +1,7 @@
 ARG IMAGE_TAG
-FROM amazon/aws-cli:${IMAGE_TAG}
+FROM naxgrp/aws-cli:${IMAGE_TAG}
 
 WORKDIR ./
-RUN yum install -y jq
 
 COPY . .
 

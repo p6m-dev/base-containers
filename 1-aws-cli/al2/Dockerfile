@@ -1,5 +1,5 @@
-ARG IMAGE_TAG
-FROM amazon/aws-cli:${IMAGE_TAG}
+ARG VERSION
+FROM amazon/aws-cli:${VERSION}
 
 RUN yum install -y jq && \
     yum clean all
