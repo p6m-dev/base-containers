@@ -190,6 +190,13 @@ jobs:
             version_arg: "" # unused
             image_tag_arg: "latest"
             variants: "linux/amd64"
+          - name: tippecanoe
+            version_tag: "latest-tippecanoe"
+            dockerfile: 2-tippecanoe/bullseye/Dockerfile
+            context: 2-tippecanoe/bullseye
+            version_arg: "1.36.0" # version for tippecanoe
+            image_tag_arg: "bullseye"
+            variants: "linux/amd64"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
