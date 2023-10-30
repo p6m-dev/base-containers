@@ -25,6 +25,10 @@ jobs:
             version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
+          - name: python
+            version_tag: bullseye
+            dockerfile: 0-python/bullseye/Dockerfile
+            context: 0-python/bullseye
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -5,10 +5,10 @@ ENV CACHE_BUST=${CACHE_BUST}
 
 # DEVNOTE: Make sure the list of packages also matches the list below!!
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
-    && rm -rf /var/lib/apt/lists/*
+  apt-get upgrade -y && \
+  apt-get install -y \
+  ca-certificates debsums gpg libssl-dev tzdata wget \
+  && rm -rf /var/lib/apt/lists/*
 
 # Calculate the sum of all installed packages, which will override Dockercache if something changed
 RUN debsums --silent --all --generate=missing
@@ -22,10 +22,10 @@ COPY --from=pkgsum /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
 RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
-    && rm -rf /var/lib/apt/lists/*
+  apt-get upgrade -y && \
+  apt-get install -y \
+  ca-certificates debsums gpg libssl-dev tzdata wget \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV BASE_IMAGE_MAINTAINER "nax-platform"
 ENV BASE_IMAGE_OS "debian"
