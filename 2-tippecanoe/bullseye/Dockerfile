@@ -13,8 +13,8 @@ RUN apt-get update \
   && apt-get -y upgrade \
   && apt-get -y install build-essential libsqlite3-dev zlib1g-dev
 
-RUN mkdir /input
-RUN mkdir /output
+RUN mkdir -m 755 /input
+RUN mkdir -m 755 /output
 
 # Build tippecanoe
 RUN apt-get -y install git g++ make \
