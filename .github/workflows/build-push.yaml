@@ -191,7 +191,7 @@ jobs:
             image_tag_arg: "latest"
             variants: "linux/amd64"
           - name: tippecanoe
-            version_tag: "latest-tippecanoe"
+            version_tag: "latest"
             dockerfile: 2-tippecanoe/bullseye/Dockerfile
             context: 2-tippecanoe/bullseye
             version_arg: "1.36.0" # version for tippecanoe
