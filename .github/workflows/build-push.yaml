@@ -126,6 +126,7 @@ jobs:
             version_tag: 3.11.6-bullseye
             dockerfile: 1-python/bullseye/Dockerfile
             context: 1-python/bullseye
+            vers;ion_arg: "3.11.6"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
