@@ -117,8 +117,13 @@ jobs:
             dockerfile: 1-aws-cli/al2/Dockerfile
             conetxt: 1-aws-cli/al2
             version_arg: "latest"
-          - name: python3
-            version_tag: python3.11.6-bullseye
+          - name: golang
+            version_tag: 1.21
+            dockerfile: 1-golang/alpine3.17/Dockerfile
+            context: 1-golang/alpine3.17
+            version_arg: "" #unused
+          - name: python
+            version_tag: 3.11.6-bullseye
             dockerfile: 1-python/bullseye/Dockerfile
             context: 1-python/bullseye
     steps:
@@ -185,6 +190,7 @@ jobs:
             dockerfile: 2-cargo-chef/rust-bullseye/Dockerfile
             context: 2-cargo-chef/rust-bullseye
             version_arg: "^0.1" # version of cargo-chef
+            builder_image_tag_arg: "" # unused
             image_tag_arg: "bullseye" # latest version of rust
             variants: "linux/amd64"
           - name: cloudfront-invalidator
@@ -192,14 +198,32 @@ jobs:
             dockerfile: 2-cloudfront-invalidator/aws-cli/Dockerfile
             context: 2-cloudfront-invalidator/aws-cli
             version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
             image_tag_arg: "latest"
             variants: "linux/amd64"
           - name: tippecanoe
-            version_tag: "latest-tippecanoe"
+            version_tag: "latest"
             dockerfile: 2-tippecanoe/bullseye/Dockerfile
             context: 2-tippecanoe/bullseye
             version_arg: "1.36.0" # version for tippecanoe
+            builder_image_tag_arg: "" # unused
             image_tag_arg: "bullseye"
+            variants: "linux/amd64"
+          - name: grpcurl
+            version_tag: "1.8.9"
+            dockerfile: 2-grpcurl/alpine3.17/Dockerfile
+            context: 2-grpcurl/alpine3.17
+            version_arg: "v1.8.9" # version (branch) for grpcurl
+            builder_image_tag_arg: "1.21" # Go build image
+            image_tag_arg: "3.17" # Alpine base image
+            variants: "linux/amd64"
+          - name: grpcurl
+            version_tag: "latest"
+            dockerfile: 2-grpcurl/alpine3.17/Dockerfile
+            context: 2-grpcurl/alpine3.17
+            version_arg: "master" # version (branch) for grpcurl
+            builder_image_tag_arg: "1.21" # Go build image
+            image_tag_arg: "3.17" # Alpine base image
             variants: "linux/amd64"
     steps:
       - name: Checkout
@@ -240,6 +264,7 @@ jobs:
           context: ${{ matrix.context }}
           build-args: |
             VERSION=${{ matrix.version_arg }}
+            BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
             CACHE_BUST=${{ github.run_id }}
           platforms: ${{ matrix.variants }}
