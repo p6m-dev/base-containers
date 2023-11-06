@@ -102,6 +102,21 @@ jobs:
             dockerfile: 1-node/bullseye/Dockerfile
             context: 1-node/bullseye
             version_arg: "16"
+          - name: python
+            version_tag: 3-bullseye
+            dockerfile: 1-python/bullseye/Dockerfile
+            context: 1-python/bullseye
+            version_arg: "3.11"
+          - name: python
+            version_tag: 3.10-bullseye
+            dockerfile: 1-python/bullseye/Dockerfile
+            context: 1-python/bullseye
+            version_arg: "3.10"
+          - name: python
+            version_tag: 3.11-bullseye
+            dockerfile: 1-python/bullseye/Dockerfile
+            context: 1-python/bullseye
+            version_arg: "3.11"
           - name: rust
             version_tag: 1.71.0-bullseye
             dockerfile: 1-rust/bullseye/Dockerfile
@@ -122,11 +137,6 @@ jobs:
             dockerfile: 1-golang/alpine3.17/Dockerfile
             context: 1-golang/alpine3.17
             version_arg: "" #unused
-          - name: python
-            version_tag: 3.11.6-bullseye
-            dockerfile: 1-python/bullseye/Dockerfile
-            context: 1-python/bullseye
-            vers;ion_arg: "3.11.6"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
