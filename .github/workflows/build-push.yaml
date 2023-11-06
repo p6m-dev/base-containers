@@ -25,6 +25,10 @@ jobs:
             version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
+          - name: ubuntu
+            version_tag: jammy
+            dockerfile: 0-ubuntu/jammy/Dockerfile
+            context: 0-ubuntu/jammy
     steps:
       - name: Checkout
         uses: actions/checkout@v3
