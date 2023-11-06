@@ -21,10 +21,18 @@ jobs:
             version_tag: "3.17"
             dockerfile: 0-alpine/3.17/Dockerfile
             context: 0-alpine/3.17
+          - name: alpine
+            version_tag: "3.18"
+            dockerfile: 0-alpine/3.18/Dockerfile
+            context: 0-alpine/3.18
           - name: debian
             version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
+          - name: ubuntu
+            version_tag: jammy
+            dockerfile: 0-ubuntu/jammy/Dockerfile
+            context: 0-ubuntu/jammy
     steps:
       - name: Checkout
         uses: actions/checkout@v3
