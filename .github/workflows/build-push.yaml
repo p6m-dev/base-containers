@@ -110,6 +110,31 @@ jobs:
             dockerfile: 1-node/bullseye/Dockerfile
             context: 1-node/bullseye
             version_arg: "16"
+          - name: python
+            version_tag: "3"
+            dockerfile: 1-python/jammy/Dockerfile
+            context: 1-python/jammy
+            version_arg: "3.11"
+          - name: python
+            version_tag: 3-jammy
+            dockerfile: 1-python/jammy/Dockerfile
+            context: 1-python/jammy
+            version_arg: "3.11"
+          - name: python
+            version_tag: 3.11-jammy
+            dockerfile: 1-python/jammy/Dockerfile
+            context: 1-python/jammy
+            version_arg: "3.11"
+          - name: python
+            version_tag: "3.10"
+            dockerfile: 1-python/jammy/Dockerfile
+            context: 1-python/jammy
+            version_arg: "3.10"
+          - name: python
+            version_tag: 3.10-jammy
+            dockerfile: 1-python/jammy/Dockerfile
+            context: 1-python/jammy
+            version_arg: "3.10"
           - name: rust
             version_tag: 1.71.0-bullseye
             dockerfile: 1-rust/bullseye/Dockerfile
