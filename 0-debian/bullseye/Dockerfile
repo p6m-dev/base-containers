@@ -2,6 +2,7 @@ FROM debian:bullseye AS pkgsum
 
 ARG CACHE_BUST
 ENV CACHE_BUST=${CACHE_BUST}
+ENV TZ=UTC
 
 # DEVNOTE: Make sure the list of packages also matches the list below!!
 # DEVNOTE: Make sure this is the same as 0-UBUNTU variants for consistency
@@ -16,6 +17,8 @@ RUN debsums --silent --all --generate=missing
 RUN cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/sha256sum
 
 FROM debian:bullseye
+
+ENV TZ=UTC
 
 # This will override the cache if any packages were upgraded
 COPY --from=pkgsum /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
