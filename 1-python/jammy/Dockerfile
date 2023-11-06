@@ -13,15 +13,16 @@ RUN echo "deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu jammy main" > /etc/
     apt-get update && \
     apt-get install -y curl python${VERSION} python${VERSION}-dev && \
     curl -fsSL https://github.com/pypa/get-pip/raw/4cfa4081d27285bda1220a62a5ebf5b4bd749cdb/public/get-pip.py | python${VERSION} && \
-    pip install --no-cache-dir pipx==1 && \
+    pip install --no-cache-dir pipx==1 virtualenv==20 && \
     rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python${VERSION} 1
 
 # Smoke tests
 RUN python --version
-RUN pipx --version
 RUN pip --version
 RUN python -m venv --help
+RUN pipx --version
+RUN virtualenv --version
 
 CMD ["python"]
