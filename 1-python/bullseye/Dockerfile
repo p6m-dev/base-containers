@@ -11,11 +11,10 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-    apt-get install -y \
-    python${VERSION} python${VERSION}-dev python${VERSION}-venv && \
+    apt-get install -y python${VERSION} python${VERSION}-dev python${VERSION}-venv && \
     curl -fsSL https://github.com/pypa/get-pip/raw/4cfa4081d27285bda1220a62a5ebf5b4bd749cdb/public/get-pip.py | python${VERSION} && \
     pip install --no-cache-dir pipx==1 && \
-    && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python${VERSION} 1
 
