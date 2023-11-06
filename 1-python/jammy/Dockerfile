@@ -8,7 +8,7 @@ RUN mkdir -p "${HOME}/.local/bin"
 ENV PATH="${PATH}:${HOME}/.local/bin"
 
 RUN apt-get update && \
-    apt-get install -y software-properties-common && \
+    apt-get install -y curl software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y python${VERSION} python${VERSION}-dev python${VERSION}-venv && \
