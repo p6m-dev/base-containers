@@ -8,6 +8,7 @@ ENV TZ=UTC
 # DEVNOTE: Make sure this is the same as 0-UBUNTU variants for consistency
 RUN apt-get update && \
     apt-get upgrade -y && \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get install -y \
     ca-certificates debsums gpg libssl-dev tzdata wget \
     && rm -rf /var/lib/apt/lists/*
@@ -27,6 +28,7 @@ RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get install -y \
     ca-certificates debsums gpg libssl-dev tzdata wget \
     && rm -rf /var/lib/apt/lists/*
