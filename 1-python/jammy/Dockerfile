@@ -1,4 +1,4 @@
-FROM naxgrp/debian:bullseye
+FROM naxgrp/ubuntu:jammy
 
 ARG VERSION
 ENV LANG=C.UTF-8
