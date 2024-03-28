@@ -110,6 +110,11 @@ jobs:
             dockerfile: 1-node/bullseye/Dockerfile
             context: 1-node/bullseye
             version_arg: "16"
+          - name: node
+            version_tag: 18-bullseye
+            dockerfile: 1-node/bullseye/Dockerfile
+            context: 1-node/bullseye
+            version_arg: "18"
           - name: python
             version_tag: "3"
             dockerfile: 1-python/jammy/Dockerfile
