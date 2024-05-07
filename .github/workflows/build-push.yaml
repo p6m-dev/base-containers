@@ -311,7 +311,7 @@ jobs:
             BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
             CACHE_BUST=${{ github.run_id }}
-          platforms: ${{ matrix.variants }}
+          platforms: linux/amd64, linux/arm64
           pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
