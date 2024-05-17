@@ -236,7 +236,7 @@ jobs:
             version_arg: "^0.1" # version of cargo-chef
             builder_image_tag_arg: "" # unused
             image_tag_arg: "bullseye" # latest version of rust
-            variants: "linux/amd64"
+            variants: "linux/amd64,linux/arm64"
           - name: cloudfront-invalidator
             version_tag: "latest-aws-cli"
             dockerfile: 2-cloudfront-invalidator/aws-cli/Dockerfile
@@ -244,7 +244,7 @@ jobs:
             version_arg: "" # unused
             builder_image_tag_arg: "" # unused
             image_tag_arg: "latest"
-            variants: "linux/amd64"
+            variants: "linux/amd64,linux/arm64"
           - name: tippecanoe
             version_tag: "latest"
             dockerfile: 2-tippecanoe/bullseye/Dockerfile
@@ -252,7 +252,7 @@ jobs:
             version_arg: "1.36.0" # version for tippecanoe
             builder_image_tag_arg: "" # unused
             image_tag_arg: "bullseye"
-            variants: "linux/amd64"
+            variants: "linux/amd64,linux/arm64"
           - name: grpcurl
             version_tag: "1.8.9"
             dockerfile: 2-grpcurl/alpine3.17/Dockerfile
@@ -260,7 +260,7 @@ jobs:
             version_arg: "v1.8.9" # version (branch) for grpcurl
             builder_image_tag_arg: "1.21" # Go build image
             image_tag_arg: "3.17" # Alpine base image
-            variants: "linux/amd64"
+            variants: "linux/amd64,linux/arm64"
           - name: grpcurl
             version_tag: "latest"
             dockerfile: 2-grpcurl/alpine3.17/Dockerfile
@@ -268,6 +268,14 @@ jobs:
             version_arg: "master" # version (branch) for grpcurl
             builder_image_tag_arg: "1.21" # Go build image
             image_tag_arg: "3.17" # Alpine base image
+            variants: "linux/amd64,linux/arm64"
+          - name: github-runner
+            version_tag: "latest"
+            dockerfile: 2-github-runner/latest/Dockerfile
+            context: 2-github-runner/latest
+            version_arg: "latest" # version for github-runner
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
             variants: "linux/amd64"
     steps:
       - name: Checkout
@@ -311,7 +319,7 @@ jobs:
             BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
             CACHE_BUST=${{ github.run_id }}
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ matrix.variants }}
           pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
