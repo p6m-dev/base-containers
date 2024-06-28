@@ -245,6 +245,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "latest"
             variants: "linux/amd64,linux/arm64"
+          - name: cloudfront-invalidator-v2
+            version_tag: "latest-aws-cli"
+            dockerfile: 2-cloudfront-invalidator-v2/aws-cli/Dockerfile
+            context: 2-cloudfront-invalidator-v2/aws-cli
+            version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "latest"
+            variants: "linux/amd64,linux/arm64"
           - name: tippecanoe
             version_tag: "latest"
             dockerfile: 2-tippecanoe/bullseye/Dockerfile
