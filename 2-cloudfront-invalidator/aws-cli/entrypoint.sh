@@ -9,7 +9,7 @@ if [ -v "ISTIO_ENABLED" ]; then
 fi
 
 TARGET_ID=""
-if [ -z "DISTRIBUTION_ID" ]; then
+if [ -z "$DISTRIBUTION_ID" ]; then
   echo "DISTRIBUTION_ID is not set, using domain from argument"
 
   echo "Invalidating CloudFront distribution for $1"

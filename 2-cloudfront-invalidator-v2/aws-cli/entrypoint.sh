@@ -8,12 +8,12 @@ if [ -v "ISTIO_ENABLED" ]; then
   echo \"Sidecar available. Running the command...\"
 fi
 
-if [ -z "DISTRIBUTION_ID" ]; then
+if [ -z "$DISTRIBUTION_ID" ]; then
   echo "Set DISTRIBUTION_ID environment variable"
   exit 1
 fi
 
-if [ -z "ROLE_ARN" ]; then
+if [ -z "$ROLE_ARN" ]; then
   echo "Set ROLE_ARN environment variable"
   exit 1
 fi
