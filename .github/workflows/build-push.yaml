@@ -285,6 +285,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64"
+          - name: dogshell
+            version_tag: "latest"
+            dockerfile: 2-dogshell/jammy/Dockerfile
+            context: 2-dogshell/jammy
+            version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # Alpine base image
+            variants: "linux/amd64,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
