@@ -1,4 +1,4 @@
-FROM naxgrp/debian:bullseye
+FROM p6m-dev/debian:bullseye
 
 ARG VERSION
 

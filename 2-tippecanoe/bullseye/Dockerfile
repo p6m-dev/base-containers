@@ -1,5 +1,5 @@
 ARG IMAGE_TAG="bullseye"
-FROM naxgrp/debian:${IMAGE_TAG}
+FROM p6m-dev/debian:${IMAGE_TAG}
 ARG version="1.36.0"
 
 ## Sourced from

@@ -32,7 +32,7 @@ RUN apt-get update && \
     ca-certificates debsums gpg libssl-dev tzdata wget \
     && rm -rf /var/lib/apt/lists/*
 
-ENV BASE_IMAGE_MAINTAINER "nax-platform"
+ENV BASE_IMAGE_MAINTAINER "p6m-dev"
 ENV BASE_IMAGE_OS "ubuntu"
 ENV BASE_IMAGE_OS_VERSION "jammy"
 ENV BASE_IMAGE_OS_PKGSUM_FILE="/var/lib/dpkg/sha256sum"

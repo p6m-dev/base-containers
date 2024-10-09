@@ -1,4 +1,4 @@
-FROM naxgrp/alpine:3.17
+FROM p6m-dev/alpine:3.17
 
 ARG VERSION
 

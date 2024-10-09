@@ -1,4 +1,4 @@
-FROM naxgrp/ubuntu:jammy
+FROM p6m-dev/ubuntu:jammy
 
 ARG VERSION
 ENV LANG=C.UTF-8
