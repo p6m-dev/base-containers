@@ -1,4 +1,4 @@
-FROM p6m-dev/debian:bullseye
+FROM ybor/debian:bullseye
 
 # Sourced from:
 # https://github.com/rust-lang/docker-rust/blob/a8a2a9d64d1f43ea377570fb938eb37384e561c0/1.71.0/bullseye/Dockerfile

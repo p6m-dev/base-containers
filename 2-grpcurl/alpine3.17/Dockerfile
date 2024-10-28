@@ -1,7 +1,7 @@
 ARG BUILDER_IMAGE_TAG="1.21"
 ARG IMAGE_TAG="3.17"
-FROM p6m-dev/golang:${BUILDER_IMAGE_TAG} as builder
-LABEL MAINTAINER="p6m-dev"
+FROM ybor/golang:${BUILDER_IMAGE_TAG} as builder
+LABEL MAINTAINER="ybor"
 
 # Derived from:
 # https://github.com/fullstorydev/grpcurl/blob/v1.8.9/Dockerfile
@@ -24,7 +24,7 @@ RUN go build -o /grpcurl \
     -ldflags "-w -extldflags \"-static\" -X \"main.version=${VERSION}\"" \
     ./cmd/grpcurl
 
-FROM p6m-dev/alpine:${IMAGE_TAG} as alpine
+FROM ybor/alpine:${IMAGE_TAG} as alpine
 
 WORKDIR /
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt

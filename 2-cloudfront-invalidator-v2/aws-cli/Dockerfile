@@ -1,5 +1,5 @@
 ARG IMAGE_TAG
-FROM p6m-dev/aws-cli:${IMAGE_TAG}
+FROM ybor/aws-cli:${IMAGE_TAG}
 
 WORKDIR /
 

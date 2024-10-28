@@ -25,7 +25,7 @@ RUN echo "PKGSUM is $(cat /var/lib/apk/sha256sum)"
 RUN apk update && \
     apk upgrade --no-cache
 
-ENV BASE_IMAGE_MAINTAINER "p6m-dev"
+ENV BASE_IMAGE_MAINTAINER "ybor"
 ENV BASE_IMAGE_OS "alpine"
 ENV BASE_IMAGE_OS_VERSION "3.17"
 ENV BASE_IMAGE_OS_PKGSUM_FILE="/var/lib/apk/sha256sum"

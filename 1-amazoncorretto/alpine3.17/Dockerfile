@@ -1,4 +1,4 @@
-FROM p6m-dev/alpine:3.17
+FROM ybor/alpine:3.17
 
 ARG VERSION
 

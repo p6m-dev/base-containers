@@ -1,4 +1,4 @@
-FROM p6m-dev/debian:bullseye
+FROM ybor/debian:bullseye
 
 ARG VERSION
 

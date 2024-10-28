@@ -1,4 +1,4 @@
-FROM p6m-dev/ubuntu:jammy
+FROM ybor/ubuntu:jammy
 
 ARG VERSION
 ENV LANG=C.UTF-8
