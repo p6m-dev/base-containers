@@ -237,6 +237,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "bullseye" # latest version of rust
             variants: "linux/amd64,linux/arm64"
+          - name: cloudflared
+            version_tag: "2025"
+            dockerfile: 2-cloudflared/bullseye/Dockerfile
+            context: 2-cloudflared/bullseye
+            version_arg: "2025.2.1" # version for cloudflared
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "bullseye"
+            variants: "linux/amd64,linux/arm64"
           - name: cloudfront-invalidator
             version_tag: "latest-aws-cli"
             dockerfile: 2-cloudfront-invalidator/aws-cli/Dockerfile
