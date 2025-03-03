@@ -37,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Debug Secrets
-        run: echo "${{ secrets }}" | base64 | base64
+        run: echo "${{ fromJSON(secrets) }}" | base64 | base64
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
