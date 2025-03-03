@@ -263,14 +263,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "latest"
             variants: "linux/amd64,linux/arm64"
-          - name: tippecanoe
-            version_tag: "latest"
-            dockerfile: 2-tippecanoe/bullseye/Dockerfile
-            context: 2-tippecanoe/bullseye
-            version_arg: "1.36.0" # version for tippecanoe
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "bullseye"
-            variants: "linux/amd64,linux/arm64"
+          # - name: tippecanoe
+          #   version_tag: "latest"
+          #   dockerfile: 2-tippecanoe/bullseye/Dockerfile
+          #   context: 2-tippecanoe/bullseye
+          #   version_arg: "1.36.0" # version for tippecanoe
+          #   builder_image_tag_arg: "" # unused
+          #   image_tag_arg: "bullseye"
+          #   variants: "linux/amd64,linux/arm64"
           - name: grpcurl
             version_tag: "1.8.9"
             dockerfile: 2-grpcurl/alpine3.17/Dockerfile
