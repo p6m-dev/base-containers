@@ -231,14 +231,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: cargo-chef
-            version_tag: "0.1-bullseye"
-            dockerfile: 2-cargo-chef/rust-bullseye/Dockerfile
-            context: 2-cargo-chef/rust-bullseye
-            version_arg: "^0.1" # version of cargo-chef
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "bullseye" # latest version of rust
-            variants: "linux/amd64,linux/arm64"
+          # - name: cargo-chef
+          #   version_tag: "0.1-bullseye"
+          #   dockerfile: 2-cargo-chef/rust-bullseye/Dockerfile
+          #   context: 2-cargo-chef/rust-bullseye
+          #   version_arg: "^0.1" # version of cargo-chef
+          #   builder_image_tag_arg: "" # unused
+          #   image_tag_arg: "bullseye" # latest version of rust
+          #   variants: "linux/amd64,linux/arm64"
           - name: cloudflared
             version_tag: "2025"
             dockerfile: 2-cloudflared/bullseye/Dockerfile
