@@ -102,11 +102,6 @@ jobs:
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
             context: 1-amazoncorretto/alpine3.17
             version_arg: "19"
-          - name: amazoncorretto
-            version_tag: 21-alpine3.17
-            dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
-            context: 1-amazoncorretto/alpine3.17
-            version_arg: "21"
           - name: nginx
             version_tag: 1-bullseye
             dockerfile: 1-nginx/bullseye/Dockerfile
