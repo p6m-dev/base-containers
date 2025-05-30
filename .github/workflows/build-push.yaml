@@ -29,6 +29,10 @@ jobs:
             version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
+          - name: debian
+            version_tag: bookworm
+            dockerfile: 0-debian/bookworm/Dockerfile
+            context: 0-debian/bookworm
           - name: ubuntu
             version_tag: jammy
             dockerfile: 0-ubuntu/jammy/Dockerfile
