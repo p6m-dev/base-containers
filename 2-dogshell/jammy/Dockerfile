@@ -1,4 +1,4 @@
-ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+ARG REGISTRY_PREFIX=ybor
 FROM ${REGISTRY_PREFIX}/python:3.11-jammy
 
 RUN pip install datadog

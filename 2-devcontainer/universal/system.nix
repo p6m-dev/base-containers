@@ -6,6 +6,7 @@ with pkgs; [
   jq
   curl
   git
+  fzf
 
   # Language runtimes - LTS versions
   dotnet-sdk_8    # .NET 8 LTS
@@ -20,4 +21,16 @@ with pkgs; [
   gnumake
   cmake
   pkg-config
+
+  # Kubernetes tools
+  kubectl
+  k9s
+  helm
+  kustomize
+  kubectx
+  kind
+  minikube
+  stern
+  argocd
+  flux
 ]

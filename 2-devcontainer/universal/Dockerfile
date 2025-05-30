@@ -1,4 +1,4 @@
-ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+ARG REGISTRY_PREFIX=ybor
 FROM ${REGISTRY_PREFIX}/ubuntu:noble AS base
 
 # Sourced from:
@@ -131,6 +131,22 @@ COPY system.nix system.nix
 RUN --mount=type=cache,target=/root/.cache/nix \
     nix-env -p /nix/var/nix/profiles/system -f system.nix -i \
     && echo "Nix packages installed to system profile"
+
+# Install Homebrew with checksum verification (pinned to stable commit)
+RUN HOMEBREW_COMMIT="4407e35affd529b11904d9757aade0efddfce4db" \
+    && HOMEBREW_INSTALL_URL="https://raw.githubusercontent.com/Homebrew/install/${HOMEBREW_COMMIT}/install.sh" \
+    && EXPECTED_SHA="24a5e8ba70e6010c911bc92b960fb7eff27590d1afb460926e3c05d20d47c69f" \
+    && curl -fsSL "$HOMEBREW_INSTALL_URL" -o install.sh \
+    && echo "$EXPECTED_SHA install.sh" | sha256sum -c - \
+    && NONINTERACTIVE=1 /bin/bash install.sh \
+    && rm install.sh \
+    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' > /etc/profile.d/brew.sh
+
+# Setup homebrew and install additional tools
+RUN --mount=type=cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" \
+    && brew tap archetect/tap \
+    && brew install archetect
 
 WORKDIR /
 

@@ -14,6 +14,7 @@ on:
 permissions:
   contents: read
   packages: write
+  actions: read
 
 jobs:
   base: # This tier builds any os-specific containers
@@ -93,6 +94,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           context: ${{ matrix.context }}
           build-args: |
+            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
@@ -242,6 +244,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           context: ${{ matrix.context }}
           build-args: |
+            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
             VERSION=${{ matrix.version_arg }}
           platforms: linux/amd64,linux/arm64
           pull: true
@@ -388,6 +391,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           context: ${{ matrix.context }}
           build-args: |
+            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
             VERSION=${{ matrix.version_arg }}
             BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
