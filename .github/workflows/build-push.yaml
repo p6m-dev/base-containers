@@ -102,8 +102,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
         with:
@@ -259,8 +259,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
         with:
@@ -414,8 +414,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
         with:
