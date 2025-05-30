@@ -149,6 +149,16 @@ jobs:
             dockerfile: 1-node/bullseye/Dockerfile
             context: 1-node/bullseye
             version_arg: "20"
+          - name: node
+            version_tag: 22-bullseye
+            dockerfile: 1-node/bullseye/Dockerfile
+            context: 1-node/bullseye
+            version_arg: "22"
+          - name: node
+            version_tag: 24-bullseye
+            dockerfile: 1-node/bullseye/Dockerfile
+            context: 1-node/bullseye
+            version_arg: "24"
           - name: python
             version_tag: "3.10"
             dockerfile: 1-python/jammy/Dockerfile
