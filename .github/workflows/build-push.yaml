@@ -185,11 +185,6 @@ jobs:
             dockerfile: 1-golang/alpine3.17/Dockerfile
             context: 1-golang/alpine3.17
             version_arg: "" #unused
-          - name: devcontainer
-            version_tag: noble
-            dockerfile: 1-devcontainer/noble/Dockerfile
-            context: 1-devcontainer/noble
-            version_arg: "" #unused
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -321,6 +316,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # Alpine base image
             variants: "linux/amd64,linux/arm64"
+          - name: devcontainer
+            version_tag: universal
+            dockerfile: 2-devcontainer/universal/Dockerfile
+            context: 2-dogshell/universal
+            version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unuesd
+            variants: "linux/amd64" # ,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
