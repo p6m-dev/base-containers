@@ -181,6 +181,11 @@ jobs:
             dockerfile: 1-golang/alpine3.17/Dockerfile
             context: 1-golang/alpine3.17
             version_arg: "" #unused
+          - name: devcontainer
+            version_tag: noble
+            dockerfile: 1-devcontainer/noble/Dockerfile
+            context: 1-devcontainer/noble
+            version_arg: "" #unused
     steps:
       - name: Checkout
         uses: actions/checkout@v4
