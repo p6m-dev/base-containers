@@ -1,4 +1,4 @@
-FROM ubuntu:noble AS upgraded
+FROM public.ecr.aws/ubuntu/ubuntu:noble AS upgraded
 
 ARG CACHE_BUST
 ENV CACHE_BUST=${CACHE_BUST}
@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN debsums --silent --all --generate=missing && \
     cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/sha256sum
 
-FROM ubuntu:noble AS final
+FROM public.ecr.aws/ubuntu/ubuntu:noble AS final
 
 ENV TZ=UTC
 

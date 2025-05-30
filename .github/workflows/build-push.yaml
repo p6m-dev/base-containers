@@ -83,7 +83,7 @@ jobs:
           context: ${{ matrix.context }}
           build-args: |
           platforms: linux/amd64,linux/arm64
-          pull: ${{ github.event_name == 'schedule' }}
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -226,7 +226,7 @@ jobs:
           build-args: |
             VERSION=${{ matrix.version_arg }}
           platforms: linux/amd64,linux/arm64
-          pull: ${{ github.event_name == 'schedule' }}
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -367,7 +367,7 @@ jobs:
             BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
           platforms: ${{ matrix.variants }}
-          pull: ${{ github.event_name == 'schedule' }}
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

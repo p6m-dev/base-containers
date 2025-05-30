@@ -1,4 +1,4 @@
-FROM debian:bullseye AS upgraded
+FROM public.ecr.aws/debian/debian:bullseye AS upgraded
 
 ARG CACHE_BUST
 ENV CACHE_BUST=${CACHE_BUST}
@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN debsums --silent --all --generate=missing && \
     cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/sha256sum
 
-FROM debian:bullseye AS final
+FROM public.ecr.aws/debian/debian:bullseye AS final
 
 ENV TZ=UTC
 
