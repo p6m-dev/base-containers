@@ -33,7 +33,7 @@ jobs:
             version_tag: jammy
             dockerfile: 0-ubuntu/jammy/Dockerfile
             context: 0-ubuntu/jammy
-          - name: noble
+          - name: ubuntu
             version_tag: noble
             dockerfile: 0-ubuntu/noble/Dockerfile
             context: 0-ubuntu/noble
