@@ -11,6 +11,10 @@ on:
   schedule:
     - cron: "30 0 * * 0" # Rebuild Weekly, 00:30am picked arbitrarily
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   base: # This tier builds any os-specific containers
     runs-on: ubuntu-latest
