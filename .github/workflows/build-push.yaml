@@ -82,7 +82,6 @@ jobs:
           file: ${{ matrix.dockerfile }}
           context: ${{ matrix.context }}
           build-args: |
-            CACHE_BUST=${{ github.run_id }}
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
@@ -226,7 +225,6 @@ jobs:
           context: ${{ matrix.context }}
           build-args: |
             VERSION=${{ matrix.version_arg }}
-            CACHE_BUST=${{ github.run_id }}
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
@@ -322,7 +320,7 @@ jobs:
           - name: devcontainer
             version_tag: universal
             dockerfile: 2-devcontainer/universal/Dockerfile
-            context: 2-dogshell/universal
+            context: 2-devcontainer/universal
             version_arg: "" # unused
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unuesd
@@ -368,7 +366,6 @@ jobs:
             VERSION=${{ matrix.version_arg }}
             BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
             IMAGE_TAG=${{ matrix.image_tag_arg }}
-            CACHE_BUST=${{ github.run_id }}
           platforms: ${{ matrix.variants }}
           pull: true
           push: true
