@@ -1,4 +1,5 @@
-FROM ybor/debian:bullseye
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/debian:bullseye
 
 # Sourced from:
 # https://github.com/rust-lang/docker-rust/blob/a8a2a9d64d1f43ea377570fb938eb37384e561c0/1.71.0/bullseye/Dockerfile

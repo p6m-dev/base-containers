@@ -1,4 +1,5 @@
-FROM ybor/debian:bullseye
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/debian:bullseye
 
 ARG VERSION
 

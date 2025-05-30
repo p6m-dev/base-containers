@@ -1,4 +1,5 @@
-FROM ybor/ubuntu:noble AS base
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/ubuntu:noble AS base
 
 # Sourced from:
 # https://github.com/devcontainers/images/blob/main/src/universal/.devcontainer/Dockerfile

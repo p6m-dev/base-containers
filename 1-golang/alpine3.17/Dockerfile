@@ -1,4 +1,5 @@
-FROM ybor/alpine:3.17
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/alpine:3.17
 
 # Sourced from
 # https://hub.docker.com/layers/library/golang/1.21-alpine3.17/images/sha256-6ce790e7e701854567137bf981c8d3675cb262a12b87a6962512e9535ff3e0b9?context=explore

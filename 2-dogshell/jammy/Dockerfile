@@ -1,4 +1,5 @@
-FROM ybor/python:3.11-jammy
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/python:3.11-jammy
 
 RUN pip install datadog
 RUN apt-get update && apt-get install -y jq

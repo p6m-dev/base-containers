@@ -2,7 +2,7 @@ FROM public.ecr.aws/docker/library/alpine:3.17 as upgraded
 
 ENV TZ=UTC
 
-# Update and upgrade packages
+# Update and upgrade packagmes
 RUN apk update && apk upgrade --no-cache
 
 # Calculate the sum of all installed packages, which will override Docker cache if something changed

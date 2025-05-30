@@ -1,6 +1,7 @@
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
 ARG BUILDER_IMAGE_TAG="1.21"
 ARG IMAGE_TAG="3.17"
-FROM ybor/golang:${BUILDER_IMAGE_TAG} as builder
+FROM ${REGISTRY_PREFIX}/golang:${BUILDER_IMAGE_TAG} as builder
 LABEL MAINTAINER="ybor"
 
 # Derived from:
@@ -24,7 +25,7 @@ RUN go build -o /grpcurl \
     -ldflags "-w -extldflags \"-static\" -X \"main.version=${VERSION}\"" \
     ./cmd/grpcurl
 
-FROM ybor/alpine:${IMAGE_TAG} as alpine
+FROM ${REGISTRY_PREFIX}/alpine:${IMAGE_TAG} as alpine
 
 WORKDIR /
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt

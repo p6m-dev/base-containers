@@ -1,4 +1,5 @@
-FROM ybor/ubuntu:jammy
+ARG REGISTRY_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER:-p6m-dev}
+FROM ${REGISTRY_PREFIX}/ubuntu:jammy
 
 ARG VERSION
 ENV LANG=C.UTF-8
