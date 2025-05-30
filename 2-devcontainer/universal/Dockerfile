@@ -118,7 +118,7 @@ RUN if [ -z $DeveloperBuild ]; then \
 FROM base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    direnv nix \
+    direnv nix procps file git sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Set global direnv config and nix PATH
@@ -132,21 +132,32 @@ RUN --mount=type=cache,target=/root/.cache/nix \
     nix-env -p /nix/var/nix/profiles/system -f system.nix -i \
     && echo "Nix packages installed to system profile"
 
+# Create linuxbrew user and install Homebrew
+RUN useradd -m -s /bin/bash linuxbrew \
+    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+
 # Install Homebrew with checksum verification (pinned to stable commit)
 RUN HOMEBREW_COMMIT="4407e35affd529b11904d9757aade0efddfce4db" \
     && HOMEBREW_INSTALL_URL="https://raw.githubusercontent.com/Homebrew/install/${HOMEBREW_COMMIT}/install.sh" \
-    && EXPECTED_SHA="24a5e8ba70e6010c911bc92b960fb7eff27590d1afb460926e3c05d20d47c69f" \
+    && echo "Downloading Homebrew install script from: $HOMEBREW_INSTALL_URL" \
     && curl -fsSL "$HOMEBREW_INSTALL_URL" -o install.sh \
+    && echo "Downloaded install script, verifying checksum..." \
+    && EXPECTED_SHA="24a5e8ba70e6010c911bc92b960fb7eff27590d1afb460926e3c05d20d47c69f" \
     && echo "$EXPECTED_SHA install.sh" | sha256sum -c - \
-    && NONINTERACTIVE=1 /bin/bash install.sh \
-    && rm install.sh \
-    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' > /etc/profile.d/brew.sh
+    && echo "Checksum verified, installing Homebrew..." \
+    && mv install.sh /tmp/install.sh \
+    && chown linuxbrew: /tmp/install.sh \
+    && su - linuxbrew -c 'NONINTERACTIVE=1 /bin/bash /tmp/install.sh' \
+    && echo "Homebrew installed, setting up shell environment..." \
+    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' > /etc/profile.d/brew.sh \
+    && rm /tmp/install.sh \
+    && echo "Homebrew installation complete"
 
-# Setup homebrew and install additional tools
-RUN --mount=type=cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" \
-    && brew tap archetect/tap \
-    && brew install archetect
+# # Setup homebrew and install additional tools
+# RUN --mount=type=cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+#     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" \
+#     && brew tap archetect/tap \
+#     && brew install archetect
 
 WORKDIR /
 

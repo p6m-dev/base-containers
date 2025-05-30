@@ -3,9 +3,6 @@
 with pkgs; [
   # Utilities
   yq-go
-  jq
-  curl
-  git
   fzf
 
   # Language runtimes - LTS versions

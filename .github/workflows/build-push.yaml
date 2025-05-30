@@ -328,14 +328,14 @@ jobs:
             builder_image_tag_arg: "1.21" # Go build image
             image_tag_arg: "3.17" # Alpine base image
             variants: "linux/amd64,linux/arm64"
-          - name: grpcurl
-            version_tag: "latest"
-            dockerfile: 2-grpcurl/alpine3.17/Dockerfile
-            context: 2-grpcurl/alpine3.17
-            version_arg: "master" # version (branch) for grpcurl
-            builder_image_tag_arg: "1.21" # Go build image
-            image_tag_arg: "3.17" # Alpine base image
-            variants: "linux/amd64,linux/arm64"
+          # - name: grpcurl
+          #   version_tag: "latest"
+          #   dockerfile: 2-grpcurl/alpine3.17/Dockerfile
+          #   context: 2-grpcurl/alpine3.17
+          #   version_arg: "master" # version (branch) for grpcurl
+          #   builder_image_tag_arg: "1.21" # Go build image
+          #   image_tag_arg: "3.17" # Alpine base image
+          #   variants: "linux/amd64,linux/arm64"
           - name: github-runner
             version_tag: "latest"
             dockerfile: 2-github-runner/latest/Dockerfile
