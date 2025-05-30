@@ -15,6 +15,7 @@ jobs:
   base: # This tier builds any os-specific containers
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: alpine
@@ -98,6 +99,7 @@ jobs:
       - base
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: amazoncorretto
@@ -242,6 +244,7 @@ jobs:
       - lang
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           # - name: cargo-chef
