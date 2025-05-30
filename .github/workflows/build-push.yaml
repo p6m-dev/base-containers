@@ -150,17 +150,7 @@ jobs:
             context: 1-node/bullseye
             version_arg: "20"
           - name: python
-            version_tag: "3"
-            dockerfile: 1-python/jammy/Dockerfile
-            context: 1-python/jammy
-            version_arg: "3.10"
-          - name: python
             version_tag: "3.10"
-            dockerfile: 1-python/jammy/Dockerfile
-            context: 1-python/jammy
-            version_arg: "3.10"
-          - name: python
-            version_tag: 3-jammy
             dockerfile: 1-python/jammy/Dockerfile
             context: 1-python/jammy
             version_arg: "3.10"
