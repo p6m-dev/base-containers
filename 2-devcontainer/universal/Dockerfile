@@ -130,9 +130,9 @@ ENV DIRENV_CONFIG=/etc/direnv \
 
 COPY system.nix system.nix
 
-# RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
-#     mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
-#     && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
+RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
+    mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
+    && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
 
 # # Create linuxbrew user and install Homebrew
 # RUN useradd -m -s /bin/bash linuxbrew \
