@@ -1,5 +1,4 @@
-ARG REGISTRY_PREFIX=ybor
-FROM ${REGISTRY_PREFIX}/ubuntu:noble AS base
+FROM public.ecr.aws/ubuntu/ubuntu:noble AS upgraded
 
 # Sourced from:
 # https://github.com/devcontainers/images/blob/main/src/universal/.devcontainer/Dockerfile
@@ -115,7 +114,7 @@ RUN if [ -z $DeveloperBuild ]; then \
     fi
 
 # Custom ybor tooling
-FROM base
+FROM upgraded
 
 RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     --mount=type=cache,id=apt-lib,target=/var/lib/apt \

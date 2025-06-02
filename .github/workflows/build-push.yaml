@@ -30,26 +30,37 @@ jobs:
             version_tag: "3.17"
             dockerfile: 0-alpine/3.17/Dockerfile
             context: 0-alpine/3.17
+            variants: "linux/amd64,linux/arm64"
           - name: alpine
             version_tag: "3.18"
             dockerfile: 0-alpine/3.18/Dockerfile
             context: 0-alpine/3.18
+            variants: "linux/amd64,linux/arm64"
           - name: debian
             version_tag: bullseye
             dockerfile: 0-debian/bullseye/Dockerfile
             context: 0-debian/bullseye
+            variants: "linux/amd64,linux/arm64"
           - name: debian
             version_tag: bookworm
             dockerfile: 0-debian/bookworm/Dockerfile
             context: 0-debian/bookworm
+            variants: "linux/amd64,linux/arm64"
           - name: ubuntu
             version_tag: jammy
             dockerfile: 0-ubuntu/jammy/Dockerfile
             context: 0-ubuntu/jammy
+            variants: "linux/amd64,linux/arm64"
           - name: ubuntu
             version_tag: noble
             dockerfile: 0-ubuntu/noble/Dockerfile
             context: 0-ubuntu/noble
+            variants: "linux/amd64,linux/arm64"
+          - name: dev
+            version_tag: universal
+            dockerfile: 0-dev/universal/Dockerfile
+            context: 0-dev/universal
+            variants: "linux/amd64" #,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,7 +109,7 @@ jobs:
           context: ${{ matrix.context }}
           build-args: |
             REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.variants }}
           pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -355,14 +366,6 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # Alpine base image
             variants: "linux/amd64,linux/arm64"
-          - name: devcontainer
-            version_tag: universal
-            dockerfile: 2-devcontainer/universal/Dockerfile
-            context: 2-devcontainer/universal
-            version_arg: "" # unused
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "" # unuesd
-            variants: "linux/amd64" #,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
