@@ -125,29 +125,29 @@ RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     && useradd -U --uid 1000 --shell /bin/bash --create-home dev \
     && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-USER dev
-WORKDIR /home/dev
-
-# Set global direnv config and nix PATH
+COPY etc /etc
 ENV DIRENV_CONFIG=/etc/direnv \
-    PATH="/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profiles/system/bin:$PATH" \
     NIX_PATH="nixpkgs=channel:nixos-unstable"
 
-COPY system.nix /etc/nix/system.nix
+WORKDIR /etc/nix
+COPY system.nix system.nix
 RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
-    sudo mkdir -p /etc/nix \
-    && sudo sh -c 'echo "sandbox = false" > /etc/nix/nix.conf' \
-    && sudo nix-env -p /nix/var/nix/profiles/system -f /etc/nix/system.nix -i
+    sh -c 'echo "sandbox = false" > /etc/nix/nix.conf' \
+    && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
 
-COPY etc /etc
+USER dev
+WORKDIR /home/dev
+ENV PATH="/nix/var/nix/profiles/system/bin:/nix/var/nix/profiles/system/sbin:$PATH"
 
 RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     --mount=type=cache,id=apt-lib,target=/var/lib/apt \
     --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
     curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash \
-    && sudo apt-get autoremove -y && sudo apt-get clean -y \
-    && sudo chown -R dev:dev /home/dev \
-    && sudo sh -c 'echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" > /etc/profile.d/brew.sh' \
-    && sudo sh -c 'echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" > /etc/fish/conf.d/brew.fish'
+    && sudo apt-get autoremove -y && sudo apt-get clean -y
+ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew" \
+    HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"\
+    HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew" \
+    PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" \
+    INFOPATH="/home/linuxbrew/.linuxbrew/share/info"
 
 CMD [ "sleep", "infinity" ]
