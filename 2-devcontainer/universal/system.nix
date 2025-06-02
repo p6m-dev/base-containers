@@ -30,4 +30,8 @@ with pkgs; [
   stern
   argocd
   flux
+
+  # Cloud tools
+  awscli2
+  azure-cli
 ]

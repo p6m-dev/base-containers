@@ -130,21 +130,21 @@ ENV DIRENV_CONFIG=/etc/direnv \
 
 COPY system.nix system.nix
 
-RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
-    mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
-    && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
+# RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
+#     mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
+#     && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
 
-# Create linuxbrew user and install Homebrew
-RUN useradd -m -s /bin/bash linuxbrew \
-    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# # Create linuxbrew user and install Homebrew
+# RUN useradd -m -s /bin/bash linuxbrew \
+#     && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-USER linuxbrew
-WORKDIR /home/linuxbrew
-# Install Homebrew with checksum verification (pinned to stable commit)
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash
+# USER linuxbrew
+# WORKDIR /home/linuxbrew
+# # Install Homebrew with checksum verification (pinned to stable commit)
+# RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+#     --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+#     --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+#     curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash
 
 USER root
 WORKDIR /
