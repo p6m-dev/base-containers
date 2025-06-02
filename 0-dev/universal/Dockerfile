@@ -122,30 +122,16 @@ RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     && apt-get install -y --no-install-recommends \
     direnv nix procps file git ssh sudo \
     && apt-get autoremove -y && apt-get clean -y \
-    && useradd -U --uid 60000 --shell /bin/bash --create-home linuxbrew \
     && useradd -U --uid 1000 --shell /bin/bash --create-home dev \
-    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
     && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Set global direnv config and nix PATH
 ENV DIRENV_CONFIG=/etc/direnv \
-    PATH="/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profiles/system/bin:$PATH" \
+    PATH="/nix/var/nix/profiles/system/bin:$PATH" \
     NIX_PATH="nixpkgs=channel:nixos-unstable"
 
-USER linuxbrew
-WORKDIR /home/linuxbrew
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash \
-    && sudo apt-get autoremove -y && sudo apt-get clean -y \
-    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' | sudo tee /etc/profile.d/00-brew.sh
-# && brew tap archetect/tap && brew install archetect
-
-USER root
 WORKDIR /root
 COPY system.nix system.nix
-
 RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
     mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
     && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
@@ -154,4 +140,13 @@ COPY etc /etc
 
 USER dev
 WORKDIR /home/dev
+
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash \
+    && sudo apt-get autoremove -y && sudo apt-get clean -y \
+    && sudo chown -R dev:dev /home/dev \
+    && echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/dev/.bashrc 
+
 CMD [ "sleep", "infinity" ]
