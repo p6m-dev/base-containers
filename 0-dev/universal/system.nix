@@ -2,8 +2,9 @@
 
 with pkgs; [
   # Utilities
-  yq-go
   fzf
+  gh
+  yq-go
 
   # Language runtimes - LTS versions
   dotnet-sdk_8    # .NET 8 LTS
