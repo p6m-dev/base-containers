@@ -15,9 +15,7 @@ COPY first-run-notice.txt /tmp/scripts/
 ENV LANG="C.UTF-8"
 
 #Merging the mutiple layers to reduce the size of the image slightly
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    apt-get update && export DEBIAN_FRONTEND=noninteractive \
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     # Restore man command
     && yes | unminimize 2>&1 \ 
     # Install basic build tools
@@ -86,9 +84,7 @@ RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     && apt-get clean -y && rm -rf /tmp/scripts
 
 # Install libssl1.1 for oryx compatibility based on architecture
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    ARCH=$(uname -m) && \
+RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]; then \
     curl -fsSL -o libssl1.1_1.1.0g-2ubuntu4_amd64.deb http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
     dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
@@ -112,9 +108,7 @@ CMD [ "sleep", "infinity" ]
 
 # [Optional] Install debugger for development of Codespaces - Not in resulting image by default
 ARG DeveloperBuild
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    if [ -z $DeveloperBuild ]; then \
+RUN if [ -z $DeveloperBuild ]; then \
     echo "not including debugger" ; \
     else \
     curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg ; \
