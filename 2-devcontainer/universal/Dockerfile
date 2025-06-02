@@ -119,36 +119,37 @@ FROM base
 
 RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
     direnv nix procps file git ssh sudo \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get autoremove -y && apt-get clean -y \
+    && useradd -U --uid 60000 --shell /bin/bash --create-home linuxbrew \
+    && useradd -U --uid 1000 --shell /bin/bash --create-home ybor \
+    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+    && echo 'ybor ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Set global direnv config and nix PATH
 ENV DIRENV_CONFIG=/etc/direnv \
     PATH="/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profiles/system/bin:$PATH" \
     NIX_PATH="nixpkgs=channel:nixos-unstable"
 
+USER linuxbrew
+WORKDIR /home/linuxbrew
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash \
+    && sudo apt-get autoremove -y && sudo apt-get clean -y
+
+USER root
+WORKDIR /root
 COPY system.nix system.nix
 
 RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
     mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
     && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
 
-# # Create linuxbrew user and install Homebrew
-# RUN useradd -m -s /bin/bash linuxbrew \
-#     && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# USER linuxbrew
-# WORKDIR /home/linuxbrew
-# # Install Homebrew with checksum verification (pinned to stable commit)
-# RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-#     --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-#     --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-#     curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash
-
-USER root
-WORKDIR /
-
 COPY etc /etc
 
+WORKDIR /
 CMD [ "sleep", "infinity" ]
