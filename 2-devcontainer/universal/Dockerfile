@@ -15,7 +15,9 @@ COPY first-run-notice.txt /tmp/scripts/
 ENV LANG="C.UTF-8"
 
 #Merging the mutiple layers to reduce the size of the image slightly
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    apt-get update && export DEBIAN_FRONTEND=noninteractive \
     # Restore man command
     && yes | unminimize 2>&1 \ 
     # Install basic build tools
@@ -84,7 +86,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean -y && rm -rf /tmp/scripts
 
 # Install libssl1.1 for oryx compatibility based on architecture
-RUN ARCH=$(uname -m) && \
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]; then \
     curl -fsSL -o libssl1.1_1.1.0g-2ubuntu4_amd64.deb http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
     dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
@@ -108,7 +112,9 @@ CMD [ "sleep", "infinity" ]
 
 # [Optional] Install debugger for development of Codespaces - Not in resulting image by default
 ARG DeveloperBuild
-RUN if [ -z $DeveloperBuild ]; then \
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    if [ -z $DeveloperBuild ]; then \
     echo "not including debugger" ; \
     else \
     curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg ; \
@@ -117,48 +123,36 @@ RUN if [ -z $DeveloperBuild ]; then \
 # Custom ybor tooling
 FROM base
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
     direnv nix procps file git sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Set global direnv config and nix PATH
 ENV DIRENV_CONFIG=/etc/direnv \
-    PATH="/nix/var/nix/profiles/system/bin:/usr/bin:/bin:$PATH" \
+    PATH="/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profiles/system/bin:$PATH" \
     NIX_PATH="nixpkgs=channel:nixos-unstable"
 
 COPY system.nix system.nix
 
-RUN --mount=type=cache,target=/root/.cache/nix \
-    nix-env -p /nix/var/nix/profiles/system -f system.nix -i \
-    && echo "Nix packages installed to system profile"
+RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
+    mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf \
+    && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
 
 # Create linuxbrew user and install Homebrew
 RUN useradd -m -s /bin/bash linuxbrew \
-    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+    && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+USER linuxbrew
+WORKDIR /home/linuxbrew
 # Install Homebrew with checksum verification (pinned to stable commit)
-RUN HOMEBREW_COMMIT="4407e35affd529b11904d9757aade0efddfce4db" \
-    && HOMEBREW_INSTALL_URL="https://raw.githubusercontent.com/Homebrew/install/${HOMEBREW_COMMIT}/install.sh" \
-    && echo "Downloading Homebrew install script from: $HOMEBREW_INSTALL_URL" \
-    && curl -fsSL "$HOMEBREW_INSTALL_URL" -o install.sh \
-    && echo "Downloaded install script, verifying checksum..." \
-    && EXPECTED_SHA="24a5e8ba70e6010c911bc92b960fb7eff27590d1afb460926e3c05d20d47c69f" \
-    && echo "$EXPECTED_SHA install.sh" | sha256sum -c - \
-    && echo "Checksum verified, installing Homebrew..." \
-    && mv install.sh /tmp/install.sh \
-    && chown linuxbrew: /tmp/install.sh \
-    && su - linuxbrew -c 'NONINTERACTIVE=1 /bin/bash /tmp/install.sh' \
-    && echo "Homebrew installed, setting up shell environment..." \
-    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' > /etc/profile.d/brew.sh \
-    && rm /tmp/install.sh \
-    && echo "Homebrew installation complete"
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
+    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
+    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash
 
-# # Setup homebrew and install additional tools
-# RUN --mount=type=cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-#     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" \
-#     && brew tap archetect/tap \
-#     && brew install archetect
-
+USER root
 WORKDIR /
 
 CMD [ "sleep", "infinity" ]
