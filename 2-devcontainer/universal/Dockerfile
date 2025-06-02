@@ -120,7 +120,7 @@ FROM base
 RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
     --mount=type=cache,id=apt-lib,target=/var/lib/apt \
     apt-get update && apt-get install -y --no-install-recommends \
-    direnv nix procps file git sudo \
+    direnv nix procps file git ssh sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Set global direnv config and nix PATH
@@ -148,5 +148,7 @@ RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
 
 USER root
 WORKDIR /
+
+COPY etc /etc
 
 CMD [ "sleep", "infinity" ]
