@@ -6,15 +6,6 @@ with pkgs; [
   gh
   yq-go
 
-  # Language runtimes
-  dotnet-sdk
-  nodejs
-  python3
-  ruby
-  openjdk
-  go
-  rustc
-
   # Build tools
   gnumake
   cmake
@@ -26,11 +17,8 @@ with pkgs; [
   helm
   kustomize
   kubectx
-  kind
-  minikube
   stern
   argocd
-  flux
 
   # Cloud tools
   awscli2
