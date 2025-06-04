@@ -133,6 +133,10 @@ USER root
 COPY etc/nix /etc/nix
 RUN echo 'eval "$(direnv hook bash )"' >> /etc/bash.bashrc
 RUN echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> /etc/bash.bashrc
+RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
+    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
+    nix-channel --update && \
+    nix-collect-garbage -d
 
 COPY home /home
 RUN chown -R dev:dev /home/dev
@@ -142,10 +146,7 @@ ENV PATH="/home/dev/.nix-profile/bin:$PATH"
 ENV NIX_PATH="/home/dev/.nix-defexpr/channels"
 
 RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
-    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
-    nix-channel --update && \
-    nix-env -f /home/default.nix -i && \
-    nix-collect-garbage -d
+    nix-env -f /home/default.nix -i
 
 USER dev
 WORKDIR /home/dev
