@@ -119,6 +119,7 @@ FROM upgraded AS nix
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl sudo xz-utils gnupg ca-certificates procps direnv \
+    git git-lfs ssh \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -U --uid 1000 -s /bin/bash --create-home dev \
