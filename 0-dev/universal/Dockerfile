@@ -143,7 +143,7 @@ ENV NIX_PATH="/home/dev/.nix-defexpr/channels"
 RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
     nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
     nix-channel --update && \
-    nix-env -f /home/dev/default.nix -i && \
+    nix-env -f /home/default.nix -i && \
     nix-collect-garbage -d
 
 USER dev
