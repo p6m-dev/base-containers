@@ -23,3 +23,6 @@ target/
 # Gradle
 .gradle/
 .resourceCache
+
+# Claude
+.claude/settings.local.json

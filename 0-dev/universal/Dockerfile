@@ -114,40 +114,45 @@ RUN if [ -z $DeveloperBuild ]; then \
     fi
 
 # Custom Dev tooling
-FROM upgraded
+FROM upgraded AS nix
 
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    apt-get update \
-    && apt-get install -y --no-install-recommends \
-    direnv nix procps file git ssh sudo \
-    && apt-get autoremove -y && apt-get clean -y \
-    && useradd -U --uid 1000 --shell /bin/bash --create-home dev \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl sudo xz-utils gnupg ca-certificates procps direnv \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -U --uid 1000 -s /bin/bash --create-home dev \
     && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-COPY etc /etc
-ENV DIRENV_CONFIG=/etc/direnv \
-    NIX_PATH="nixpkgs=channel:nixos-unstable"
+USER dev
+ENV USER=dev HOME=/home/dev SHELL=/bin/bash
+RUN curl -L https://nixos.org/nix/install | bash -s -- --no-daemon
 
-WORKDIR /etc/nix
-COPY system.nix system.nix
-RUN --mount=type=cache,id=nix-cache,target=/root/.cache/nix \
-    sh -c 'echo "sandbox = false" > /etc/nix/nix.conf' \
-    && nix-env -p /nix/var/nix/profiles/system -f system.nix -i
+USER root
+COPY etc/nix /etc/nix
+RUN echo 'eval "$(direnv hook bash )"' >> /etc/bash.bashrc
+RUN echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> /etc/bash.bashrc
+
+COPY home /home
+RUN chown -R dev:dev /home/dev
+
+USER dev
+ENV PATH="/home/dev/.nix-profile/bin:$PATH"
+ENV NIX_PATH="/home/dev/.nix-defexpr/channels"
+
+RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
+    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
+    nix-channel --update && \
+    nix-env -f /home/dev/default.nix -i && \
+    nix-collect-garbage -d
 
 USER dev
 WORKDIR /home/dev
-ENV PATH="/nix/var/nix/profiles/system/bin:/nix/var/nix/profiles/system/sbin:$PATH"
+RUN direnv allow
+SHELL ["/bin/bash", "-l", "-c"]
+CMD [ "sleep", "infinity" ]
 
-RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt \
-    --mount=type=cache,id=apt-lib,target=/var/lib/apt \
-    --mount=type=cache,id=brew-cache,target=/home/linuxbrew/.linuxbrew/var/homebrew/cache \
-    curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/4407e35affd529b11904d9757aade0efddfce4db/install.sh" | bash \
-    && sudo apt-get autoremove -y && sudo apt-get clean -y
-ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew" \
-    HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"\
-    HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew" \
-    PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" \
-    INFOPATH="/home/linuxbrew/.linuxbrew/share/info"
-
+# Final images
+FROM nix AS final
+# TODO Other stuffs
 CMD [ "sleep", "infinity" ]
