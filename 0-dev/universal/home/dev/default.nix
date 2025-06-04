@@ -1,34 +1,12 @@
-{ pkgs ? import <nixpkgs> {} }:
+let
+  pkgs     = import <nixpkgs> {};
+  homePkgs = import /home/packages.nix { inherit pkgs; };
+in
 
-with pkgs;
+pkgs.mkShell {
+  buildInputs = homePkgs;
 
-mkShell {
-  buildInputs = [
-    # Build Essential
-    gnumake
-    binutils
-    glibc
-    coreutils
-    autoconf
-    automake
-    libtool
-    
-    # Utilities
-    fzf
-    yq-go
-
-    # Kubernetes
-    kubectl
-    k9s
-    helm
-    kustomize
-    kubectx
-    stern
-    argocd
-
-    # Cloud
-    gh
-    awscli2
-    azure-cli
-  ];
+  shellHook = ''
+    echo "Entering dev shell with: ${pkgs.lib.concatStringsSep " " (map (p: p.name) homePkgs)}"
+  '';
 }
