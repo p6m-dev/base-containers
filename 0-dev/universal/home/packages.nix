@@ -1,31 +1,31 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 
 with pkgs;
 [
-    # Build Essential
-    gnumake
-    binutils
-    glibc
-    coreutils
-    autoconf
-    automake
-    libtool
-    
-    # Utilities
-    fzf
-    yq-go
+  # Build Essential
+  gnumake
+  binutils
+  glibc
+  coreutils
+  autoconf
+  automake
+  libtool
 
-    # Kubernetes
-    kubectl
-    k9s
-    helm
-    kustomize
-    kubectx
-    stern
-    argocd
+  # Utilities
+  fzf
+  yq-go
 
-    # Cloud
-    gh
-    awscli2
-    azure-cli
+  # Kubernetes
+  kubectl
+  k9s
+  helm
+  kustomize
+  kubectx
+  stern
+  argocd
+
+  # Cloud
+  gh
+  awscli2
+  azure-cli
 ]

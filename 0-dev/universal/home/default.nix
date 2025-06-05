@@ -1,12 +1,16 @@
+{ pkgs ? import <nixpkgs> { }, packages ? [ ] }:
+
 let
-  pkgs     = import <nixpkgs> {};
   homePkgs = import /home/packages.nix { inherit pkgs; };
+  extraPkgs = packages;
+  allPkgs = homePkgs ++ extraPkgs;
 in
 
 pkgs.mkShell {
-  buildInputs = homePkgs;
+  buildInputs = allPkgs;
 
   shellHook = ''
-    echo "Entering dev shell with: ${pkgs.lib.concatStringsSep " " (map (p: p.name) homePkgs)}"
+        echo "Entering shell with: \
+    ${pkgs.lib.concatStringsSep " " (map (p: p.name) (allPkgs))}"
   '';
 }
