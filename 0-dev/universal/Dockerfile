@@ -123,6 +123,7 @@ RUN apt-get update && \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -U --uid 1000 -s /bin/bash --create-home dev \
+    && usermod -aG sudo dev \
     && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER dev
@@ -131,8 +132,8 @@ RUN curl -L https://nixos.org/nix/install | bash -s -- --no-daemon
 
 USER root
 COPY etc/nix /etc/nix
-RUN echo 'eval "$(direnv hook bash )"' >> /etc/bash.bashrc
-RUN echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> /etc/bash.bashrc
+# RUN echo 'eval "$(direnv hook bash )"' >> /etc/bash.bashrc
+# RUN echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> /etc/bash.bashrc
 RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
     nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
     nix-channel --update && \
