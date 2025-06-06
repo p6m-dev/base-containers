@@ -132,8 +132,6 @@ RUN curl -L https://nixos.org/nix/install | bash -s -- --no-daemon
 
 USER root
 COPY etc/nix /etc/nix
-# RUN echo 'eval "$(direnv hook bash )"' >> /etc/bash.bashrc
-# RUN echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> /etc/bash.bashrc
 RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
     nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
     nix-channel --update && \
@@ -153,9 +151,53 @@ USER dev
 WORKDIR /home/dev
 RUN direnv allow
 SHELL ["/bin/bash", "-l", "-c"]
-CMD [ "sleep", "infinity" ]
 
 # Final images
-FROM nix AS final
-# TODO Other stuffs
+FROM nix AS linuxbrew
+
+USER dev
+RUN --mount=type=cache,target=/tmp/homebrew-cache,uid=1000,gid=1000 \
+    HOMEBREW_CACHE=/tmp/homebrew-cache \
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+USER root  
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+
+# Final images
+FROM linuxbrew AS tooling
+
+# USER dev
+# RUN --mount=type=cache,target=/tmp/homebrew-cache,uid=1000,gid=1000 \
+#     --mount=type=cache,target=/tmp/homebrew-downloads,uid=1000,gid=1000 \
+#     HOMEBREW_CACHE=/tmp/homebrew-cache \
+#     HOMEBREW_TEMP=/tmp/homebrew-downloads \
+#     brew install htop jq && \
+#     brew cleanup --prune=all
+
+# Copy and run installation script
+RUN --mount=type=cache,target=/tmp/tool-cache \
+    cd /home/dev && eval "$(direnv export bash)" && \
+    sudo -u root /home/packages.sh && \
+    sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+
+FROM tooling AS final
+
+USER dev
+ENV PATH="/home/dev/.nix-profile/bin:$PATH"
+ENV NIX_PATH="/home/dev/.nix-defexpr/channels"
+SHELL ["/bin/bash", "-l", "-c"]
+
+RUN echo "Testing Nix tools:" && \
+    cd /home/dev && eval "$(direnv export bash)" && \
+    kubectl version --client && \
+    echo "Testing Homebrew:" && \
+    brew --version && \
+    echo "Testing optimized tools:" && \
+    k9s version && \
+    p6m --version && \
+    archetect --version && \
+    echo "Smoke test successful: All tools installed correctly."
+
 CMD [ "sleep", "infinity" ]
