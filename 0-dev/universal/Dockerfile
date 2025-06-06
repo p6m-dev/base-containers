@@ -138,6 +138,7 @@ RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
     nix-collect-garbage -d
 
 COPY home /home
+COPY etc /etc
 RUN chown -R dev:dev /home/dev
 
 USER dev
