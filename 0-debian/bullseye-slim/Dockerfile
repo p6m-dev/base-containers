@@ -5,10 +5,7 @@ ENV CACHE_BUST=${CACHE_BUST}
 ENV TZ=UTC
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
+    apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Calculate the sum of all installed packages, which will override Dockercache if something changed
@@ -26,10 +23,7 @@ RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
 # Apply the same updates as the upgraded stage
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
+    apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 ENV BASE_IMAGE_MAINTAINER="ybor"
