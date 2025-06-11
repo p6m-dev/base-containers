@@ -4,12 +4,11 @@ FROM ${REGISTRY_PREFIX}/debian:bullseye-slim
 ARG VERSION
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gnupg && \
+    apt-get install -y --no-install-recommends gnupg ca-certificates libssl-dev && \
     echo "deb https://nginx.org/packages/debian/ bullseye nginx" >> /etc/apt/sources.list && \ 
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62 && \
     apt-get update && \
-    apt-get install nginx=$VERSION.\* && \
-    apt-get remove gnupg && \
+    apt-get install nginx=$VERSION.\* -y --no-install-recommends && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
