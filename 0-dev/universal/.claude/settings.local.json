@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker run:*)",
+      "Bash(docker build:*)",
+      "Bash(find:*)",
+      "Bash(docker history:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": false
+}

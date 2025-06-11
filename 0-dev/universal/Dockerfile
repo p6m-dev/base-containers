@@ -139,6 +139,7 @@ RUN . "$HOME/.nix-profile/etc/profile.d/nix.sh" && \
 
 COPY home /home
 COPY etc /etc
+COPY usr /usr
 RUN chown -R dev:dev /home/dev
 
 USER dev

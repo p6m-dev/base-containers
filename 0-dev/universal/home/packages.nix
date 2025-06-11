@@ -11,6 +11,9 @@ with pkgs;
   automake
   libtool
 
+  # Development Tools
+  code-server
+
   # Utilities
   fzf
   yq-go
@@ -23,7 +26,7 @@ with pkgs;
 
   # Cloud - Keep lightweight tools in Nix
   gh
-  
+
   # Heavy tools moved to direct downloads in Dockerfile:
   # k9s, helm, argocd, awscli2, azure-cli
 ]
