@@ -25,12 +25,9 @@ COPY --from=upgraded /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
 
 RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
-# Apply the same updates as the upgraded stage
+# Apply the same updates as the upgraded stage (except debsums)
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends \
-    debsums \
+    apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 ENV BASE_IMAGE_MAINTAINER="ybor"
