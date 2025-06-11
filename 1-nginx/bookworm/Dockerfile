@@ -1,9 +1,9 @@
 ARG REGISTRY_PREFIX=ybor
-FROM ${REGISTRY_PREFIX}/debian:bullseye-slim
+FROM ${REGISTRY_PREFIX}/debian:bookworm-slim
 
 ARG VERSION
 
-RUN echo "deb https://nginx.org/packages/debian/ bullseye nginx" >> /etc/apt/sources.list && \ 
+RUN echo "deb https://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list && \ 
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62 && \
     apt-get update && \
     apt-get install -y nginx=$VERSION.\* && \
