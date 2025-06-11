@@ -42,9 +42,19 @@ jobs:
             context: 0-debian/bullseye
             variants: "linux/amd64,linux/arm64"
           - name: debian
+            version_tag: bullseye-slim
+            dockerfile: 0-debian/bullseye-slim/Dockerfile
+            context: 0-debian/bullseye-slim
+            variants: "linux/amd64,linux/arm64"
+          - name: debian
             version_tag: bookworm
             dockerfile: 0-debian/bookworm/Dockerfile
             context: 0-debian/bookworm
+            variants: "linux/amd64,linux/arm64"
+          - name: debian
+            version_tag: bookworm-slim
+            dockerfile: 0-debian/bookworm-slim/Dockerfile
+            context: 0-debian/bookworm-slim
             variants: "linux/amd64,linux/arm64"
           - name: ubuntu
             version_tag: jammy
@@ -154,6 +164,11 @@ jobs:
             version_tag: 1-bullseye
             dockerfile: 1-nginx/bullseye/Dockerfile
             context: 1-nginx/bullseye
+            version_arg: "1"
+          - name: nginx
+            version_tag: 1-bookworm
+            dockerfile: 1-nginx/bookworm/Dockerfile
+            context: 1-nginx/bookworm
             version_arg: "1"
           - name: node
             version_tag: 16-bullseye
