@@ -8,7 +8,7 @@ ENV TZ=UTC
 RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     debsums \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,7 +29,7 @@ RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     debsums \
     && rm -rf /var/lib/apt/lists/*
 
