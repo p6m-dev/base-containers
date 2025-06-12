@@ -1,9 +1,9 @@
-[url "https://github.com/"]
-    insteadOf = git@github.com:
-    insteadOf = ssh://git@github.com/
+# [url "https://github.com/"]
+#     insteadOf = git@github.com:
+#     insteadOf = ssh://git@github.com/
 
-[credential "https://github.com"]
-    helper = "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"
+# [credential "https://github.com"]
+#     helper = "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"
 
 [filter "lfs"]
     required = true
