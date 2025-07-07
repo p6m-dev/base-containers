@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y \
 RUN useradd -m -s /bin/bash dev && \
     echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+RUN mv /usr/bin/env /usr/bin/_env
 COPY etc /etc
+COPY usr /usr
 COPY .envrc /.envrc
 COPY default.nix /default.nix
 

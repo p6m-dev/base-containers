@@ -1,0 +1,4 @@
+#!/bin/sh
+# Wrapper for she-bangs invoking "env bash" or "env sh"
+
+exec direnv exec "$(pwd)" /usr/bin/_env "$@"
