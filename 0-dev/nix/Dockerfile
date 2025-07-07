@@ -30,8 +30,9 @@ ENV NIX_PATH=/home/dev/.nix-defexpr/channels
 ENV PATH=/home/dev/.nix-profile/bin:/home/dev/.nix-profile/sbin:/home/dev/.nix-profile:/home/dev/.nix-profile/libexec:/home/dev/.nix-profile/libexec/nix:$PATH
 
 SHELL ["/bin/bash", "-c"]
-RUN direnv allow
-RUN echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
+RUN direnv allow && \
+    rm /home/dev/.nix-defexpr/channels_root && \
+    echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
 
