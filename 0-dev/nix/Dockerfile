@@ -18,7 +18,7 @@ RUN useradd -m -s /bin/bash dev && \
 USER dev
 WORKDIR /home/dev
 
-RUN curl -L https://nixos.org/nix/install | sh
+RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 
 ENV USER=dev
 ENV NIX_PATH=/home/dev/.nix-defexpr/channels
@@ -30,3 +30,5 @@ RUN echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
 ENTRYPOINT ["/bin/bash"]
 CMD ["sleep", "infinity"]
+
+COPY --chown=root:root _ /
