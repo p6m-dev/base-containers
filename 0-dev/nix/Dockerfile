@@ -32,7 +32,8 @@ ENV PATH=/home/dev/.nix-profile/bin:/home/dev/.nix-profile/sbin:/home/dev/.nix-p
 SHELL ["/bin/bash", "-c"]
 RUN direnv allow && \
     rm /home/dev/.nix-defexpr/channels_root && \
-    echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
+    echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc && \
+    echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
 
