@@ -17,6 +17,7 @@ with pkgs;
   # Utilities
   fzf
   yq-go
+  jq
 
   # Kubernetes - Keep lightweight/essential tools in Nix
   kubectl
@@ -24,9 +25,11 @@ with pkgs;
   kubectx
   stern
 
-  # Cloud - Keep lightweight tools in Nix
+  # Cloud
   gh
-
-  # Heavy tools moved to direct downloads in Dockerfile:
-  # k9s, helm, argocd, awscli2, azure-cli
+  k9s
+  helm
+  argocd
+  awscli2
+  azure-cli
 ]
