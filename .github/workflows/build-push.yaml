@@ -71,6 +71,11 @@ jobs:
             dockerfile: 0-dev/universal/Dockerfile
             context: 0-dev/universal
             variants: "linux/amd64" #,linux/arm64"
+          - name: dev
+            version_tag: nix
+            dockerfile: 0-dev/nix/Dockerfile
+            context: 0-dev/nix
+            variants: "linux/amd64,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
