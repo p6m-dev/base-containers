@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     sudo \
     git \
     bash \
+    zsh \
+    fish \
     direnv \
     && rm -rf /var/lib/apt/lists/*
 
@@ -36,9 +38,13 @@ ENV PATH=/home/dev/.nix-profile/bin:/home/dev/.nix-profile/sbin:/home/dev/.nix-p
 SHELL ["/bin/bash", "-c"]
 RUN direnv allow && \
     rm /home/dev/.nix-defexpr/channels_root && \
+    echo 'eval "$(direnv export bash)"' >> ~/.profile && \
     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc && \
     echo 'eval "$(direnv hook bash)"' >> ~/.bashrc && \
-    echo 'eval "$(direnv export bash)"' >> ~/.profile
+    echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc && \
+    echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc && \
+    mkdir -p ~/.config/fish && \
+    echo 'if status --is-interactive; and command -v direnv >/dev/null; direnv hook fish | source; end' >> ~/.config/fish/config.fish
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
 
