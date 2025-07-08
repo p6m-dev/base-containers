@@ -37,6 +37,7 @@ SHELL ["/bin/bash", "-c"]
 RUN direnv allow && \
     rm /home/dev/.nix-defexpr/channels_root && \
     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc && \
+    echo 'eval "$(direnv hook bash)"' >> ~/.bashrc && \
     echo 'eval "$(direnv export bash)"' >> ~/.profile
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
