@@ -29,37 +29,7 @@ let
     else [ ];
 
   # Auto-detection based on project files (current dir and one level deep)
-  detectPackages =
-    let
-      fileExists = file: builtins.pathExists (./. + "/${file}");
-      
-      # Get all subdirectories and check for files
-      findInSubdirs = file:
-        let
-          subdirs = builtins.attrNames (builtins.readDir ./.);
-          checkSubdir = subdir: 
-            let path = ./. + "/${subdir}";
-            in builtins.pathExists path && 
-               builtins.readDir path ? ${file};
-        in
-        builtins.any checkSubdir subdirs;
-      
-      # Check current directory or any subdirectory
-      hasFile = file: fileExists file || findInSubdirs file;
-      
-      detected = [ ]
-        ++ (if hasFile "package.json" then packageSets.nodejs else [ ])
-        ++ (if hasFile "requirements.txt" || hasFile "pyproject.toml" then packageSets.python else [ ])
-        ++ (if hasFile "Cargo.toml" then packageSets.rust else [ ])
-        ++ (if hasFile "go.mod" then packageSets.go else [ ])
-        ++ (if hasFile "pom.xml" || hasFile "build.gradle" then packageSets.java else [ ])
-        ++ (if hasFile "Dockerfile" then packageSets.docker else [ ])
-        ++ (if hasFile "main.tf" then packageSets.terraform else [ ]);
-    in
-    detected;
-
-  # Detection messages for shell hook
-  detectionMessages = 
+  detection = 
     let
       fileExists = file: builtins.pathExists (./. + "/${file}");
       
@@ -80,21 +50,35 @@ let
         else let subdir = findFileInSubdirs file;
              in if subdir != null then subdir else null;
       
-      messages = []
-        ++ (let path = getPath "package.json"; in if path != null then ["Node.js project detected at ${path}"] else [])
-        ++ (let path = getPath "requirements.txt"; in if path != null then ["Python project detected at ${path}"] else [])
-        ++ (let path = getPath "pyproject.toml"; in if path != null then ["Python project detected at ${path}"] else [])
-        ++ (let path = getPath "Cargo.toml"; in if path != null then ["Rust project detected at ${path}"] else [])
-        ++ (let path = getPath "go.mod"; in if path != null then ["Go project detected at ${path}"] else [])
-        ++ (let path = getPath "pom.xml"; in if path != null then ["Java project detected at ${path}"] else [])
-        ++ (let path = getPath "build.gradle"; in if path != null then ["Java project detected at ${path}"] else [])
-        ++ (let path = getPath "Dockerfile"; in if path != null then ["Docker project detected at ${path}"] else [])
-        ++ (let path = getPath "main.tf"; in if path != null then ["Terraform project detected at ${path}"] else []);
+      detections = [
+        { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
+        { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
+        { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
+        { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
+        { file = "go.mod"; packages = packageSets.go; name = "Go"; }
+        { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
+        { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
+        { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
+        { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
+      ];
+      
+      results = map (d: 
+        let path = getPath d.file;
+        in if path != null then { 
+          packages = d.packages; 
+          message = "${d.name} project detected at ${path}";
+        } else null
+      ) detections;
+      
+      validResults = builtins.filter (r: r != null) results;
     in
-    messages;
+    {
+      packages = builtins.concatLists (map (r: r.packages) validResults);
+      messages = map (r: r.message) validResults;
+    };
 
   # Combine all package sources
-  extraPkgs = packages ++ envPackages ++ detectPackages;
+  extraPkgs = packages ++ envPackages ++ detection.packages;
   extraPkgsCount = builtins.length extraPkgs;
   allPkgs = homePkgs ++ extraPkgs;
 in
@@ -106,7 +90,7 @@ pkgs.mkShell {
     echo "🚀 Nix development environment loaded"
     echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
     
-    ${pkgs.lib.concatStringsSep "\n    " (map (msg: "echo \"🔍 ${msg}\"") detectionMessages)}
+    ${pkgs.lib.concatStringsSep "\n    " (map (msg: "echo \"🔍 ${msg}\"") detection.messages)}
     
     if [ ${toString extraPkgsCount} -eq 0 ]; then
       echo "➕ No additional packages loaded"
