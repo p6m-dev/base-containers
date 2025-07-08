@@ -32,8 +32,6 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 ENV USER=dev
 ENV DIRENV_ALLOW_NOALLOW=1
 ENV DIRENV_CONFIG=/etc/direnv
-ENV NIX_PATH=/home/dev/.nix-defexpr/channels
-ENV PATH=/home/dev/.nix-profile/bin:/home/dev/.nix-profile/sbin:/home/dev/.nix-profile:/home/dev/.nix-profile/libexec:/home/dev/.nix-profile/libexec/nix:$PATH
 
 SHELL ["/bin/bash", "-c"]
 RUN direnv allow && \
