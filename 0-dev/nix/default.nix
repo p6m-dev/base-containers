@@ -35,13 +35,17 @@ let
       
       findFileInSubdirs = file:
         let
-          entries = builtins.readDir ./.;
-          subdirs = builtins.attrNames (builtins.filterAttrs (name: type: type == "directory") entries);
+          currentDirExists = builtins.pathExists ./.;
+          entries = if currentDirExists then builtins.readDir ./. else {};
+          subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
           findSubdir = subdir: 
-            let path = ./. + "/${subdir}";
-            in if builtins.pathExists path && builtins.readDir path ? ${file}
-               then subdir
-               else null;
+            let 
+              path = ./. + "/${subdir}";
+              subdirExists = builtins.pathExists path;
+            in 
+            if subdirExists && builtins.pathExists (path + "/${file}")
+            then subdir
+            else null;
           found = builtins.filter (x: x != null) (map findSubdir subdirs);
         in
         if builtins.length found > 0 then builtins.head found else null;
@@ -74,7 +78,7 @@ let
       validResults = builtins.filter (r: r != null) results;
     in
     {
-      packages = builtins.concatLists (map (r: r.packages) validResults);
+      packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
       messages = map (r: r.message) validResults;
     };
 

@@ -40,5 +40,11 @@ RUN direnv allow && \
     echo 'eval "$(direnv export bash)"' >> ~/.profile
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
+
+# Smoke test: validate default.nix syntax only
+RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && \
+    nix-instantiate --parse /default.nix > /dev/null && \
+    echo "✓ default.nix syntax validated"
+
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "sleep", "infinity" ]
