@@ -1,7 +1,0 @@
-# Global direnv configuration
-# Auto-allow .envrc files in /ede directory and /home/dev
-
-case "$PWD" in
-    /ede/*) direnv allow ;;
-    /home/dev/*) direnv allow ;;
-esac

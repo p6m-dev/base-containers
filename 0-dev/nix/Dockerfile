@@ -28,6 +28,7 @@ WORKDIR /home/dev
 RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 
 ENV USER=dev
+ENV DIRENV_CONFIG=/etc/direnv/direnv.toml
 ENV NIX_PATH=/home/dev/.nix-defexpr/channels
 ENV PATH=/home/dev/.nix-profile/bin:/home/dev/.nix-profile/sbin:/home/dev/.nix-profile:/home/dev/.nix-profile/libexec:/home/dev/.nix-profile/libexec/nix:$PATH
 
