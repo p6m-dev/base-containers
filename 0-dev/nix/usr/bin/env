@@ -2,8 +2,8 @@
 # Wrapper for she-bangs invoking "env bash" or "env sh"
 
 # Source nix environment if available
-if [ -f /home/dev/.nix-profile/etc/profile.d/nix.sh ]; then
-    . /home/dev/.nix-profile/etc/profile.d/nix.sh
+if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
     exec direnv exec "$(pwd)" /usr/bin/_env "$@"
 else
     # Fallback: run without nix environment
