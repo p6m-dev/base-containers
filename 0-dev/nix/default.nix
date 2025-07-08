@@ -35,7 +35,8 @@ let
       
       findFileInSubdirs = file:
         let
-          subdirs = builtins.attrNames (builtins.readDir ./.);
+          entries = builtins.readDir ./.;
+          subdirs = builtins.attrNames (builtins.filterAttrs (name: type: type == "directory") entries);
           findSubdir = subdir: 
             let path = ./. + "/${subdir}";
             in if builtins.pathExists path && builtins.readDir path ? ${file}
