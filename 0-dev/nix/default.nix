@@ -31,19 +31,29 @@ let
   # Auto-detection based on project files (current dir and one level deep)
   detection = 
     let
-      fileExists = file: builtins.pathExists (./. + "/${file}");
+      # Safe file existence check that handles permission errors
+      safePathExists = path: 
+        builtins.tryEval (builtins.pathExists path) // { value = false; };
+      
+      # Safe directory reading that handles permission errors
+      safeReadDir = path:
+        let result = builtins.tryEval (builtins.readDir path);
+        in if result.success then result.value else {};
+      
+      fileExists = file: (safePathExists (./. + "/${file}")).value;
       
       findFileInSubdirs = file:
         let
-          currentDirExists = builtins.pathExists ./.;
-          entries = if currentDirExists then builtins.readDir ./. else {};
+          currentDirExists = (safePathExists ./.).value;
+          entries = if currentDirExists then safeReadDir ./. else {};
           subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
           findSubdir = subdir: 
             let 
               path = ./. + "/${subdir}";
-              subdirExists = builtins.pathExists path;
+              subdirExists = (safePathExists path).value;
+              fileInSubdir = (safePathExists (path + "/${file}")).value;
             in 
-            if subdirExists && builtins.pathExists (path + "/${file}")
+            if subdirExists && fileInSubdir
             then subdir
             else null;
           found = builtins.filter (x: x != null) (map findSubdir subdirs);
