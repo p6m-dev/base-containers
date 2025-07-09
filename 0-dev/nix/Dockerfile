@@ -21,8 +21,6 @@ RUN useradd -m -s /bin/bash dev && \
 RUN mv /usr/bin/env /usr/bin/_env
 COPY etc /etc
 COPY usr /usr
-COPY .envrc /.envrc
-COPY default.nix /default.nix
 
 USER dev
 WORKDIR /home/dev
@@ -34,8 +32,7 @@ ENV DIRENV_ALLOW_NOALLOW=1
 ENV DIRENV_CONFIG=/etc/direnv
 
 SHELL ["/bin/bash", "-c"]
-RUN direnv allow && \
-    rm /home/dev/.nix-defexpr/channels_root && \
+RUN rm /home/dev/.nix-defexpr/channels_root && \
     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc && \
     echo 'eval "$(direnv hook bash)"' >> ~/.bashrc && \
     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc && \

@@ -29,42 +29,43 @@ let
     else [ ];
 
   # Auto-detection based on project files (current dir and one level deep)
-  detection = 
+  detection =
     let
       # Safe file existence check that handles permission errors
-      safePathExists = path: 
+      safePathExists = path:
         builtins.tryEval (builtins.pathExists path) // { value = false; };
-      
+
       # Safe directory reading that handles permission errors
       safeReadDir = path:
         let result = builtins.tryEval (builtins.readDir path);
-        in if result.success then result.value else {};
-      
+        in if result.success then result.value else { };
+
       fileExists = file: (safePathExists (./. + "/${file}")).value;
-      
+
       findFileInSubdirs = file:
         let
           currentDirExists = (safePathExists ./.).value;
-          entries = if currentDirExists then safeReadDir ./. else {};
+          entries = if currentDirExists then safeReadDir ./. else { };
           subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
-          findSubdir = subdir: 
-            let 
+          findSubdir = subdir:
+            let
               path = ./. + "/${subdir}";
               subdirExists = (safePathExists path).value;
               fileInSubdir = (safePathExists (path + "/${file}")).value;
-            in 
+            in
             if subdirExists && fileInSubdir
             then subdir
             else null;
           found = builtins.filter (x: x != null) (map findSubdir subdirs);
         in
         if builtins.length found > 0 then builtins.head found else null;
-      
+
       getPath = file:
         if fileExists file then "."
-        else let subdir = findFileInSubdirs file;
-             in if subdir != null then subdir else null;
-      
+        else
+          let subdir = findFileInSubdirs file;
+          in if subdir != null then subdir else null;
+
       detections = [
         { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
         { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
@@ -76,15 +77,17 @@ let
         { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
         { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
       ];
-      
-      results = map (d: 
-        let path = getPath d.file;
-        in if path != null then { 
-          packages = d.packages; 
-          message = "${d.name} project detected at ${path}";
-        } else null
-      ) detections;
-      
+
+      results = map
+        (d:
+          let path = getPath d.file;
+          in if path != null then {
+            packages = d.packages;
+            message = "${d.name} project detected at ${path}";
+          } else null
+        )
+        detections;
+
       validResults = builtins.filter (r: r != null) results;
     in
     {
