@@ -5,13 +5,13 @@
 if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
     
-    # Check if there's a .envrc file
+    # Check if there's a local .envrc file
     if [ -f "$(pwd)/.envrc" ]; then
-        # Use nix-shell directly instead of direnv
+        # Use nix-shell with local environment
         exec nix-shell --run "/usr/bin/_env $*"
-    elif [ -f "/.envrc" ]; then
+    else
         # Use the global nix shell
-        exec nix-shell /default.nix --run "/usr/bin/_env $*"
+        exec nix-shell /etc/nix/default.nix --run "/usr/bin/_env $*"
     fi
 fi
 
