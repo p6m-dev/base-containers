@@ -4,8 +4,16 @@
 # Source nix environment if available
 if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-    exec direnv exec "$(pwd)" /usr/bin/_env "$@"
-else
-    # Fallback: run without nix environment
-    exec /usr/bin/_env "$@"
+    
+    # Check if there's a .envrc file
+    if [ -f "$(pwd)/.envrc" ]; then
+        # Use nix-shell directly instead of direnv
+        exec nix-shell --run "/usr/bin/_env $*"
+    elif [ -f "/.envrc" ]; then
+        # Use the global nix shell
+        exec nix-shell /default.nix --run "/usr/bin/_env $*"
+    fi
 fi
+
+# Fallback: run without nix environment
+exec /usr/bin/_env "$@"
