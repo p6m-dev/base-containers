@@ -46,10 +46,26 @@ let
         let result = builtins.tryEval (builtins.readDir path);
         in if result.success then result.value else { };
 
-      # Safe file existence check that ignores permission errors
-      safeFileExists = path:
+      # Safe directory accessibility check
+      safeDirExists = path:
         let result = builtins.tryEval (builtins.pathExists path);
         in if result.success then result.value else false;
+
+      # Safe file existence check that ignores permission errors
+      # First checks if the parent directory is accessible
+      safeFileExists = path:
+        let 
+          # Extract parent directory from path
+          parentDir = builtins.dirOf path;
+          # Check if parent directory is accessible first
+          parentAccessible = safeDirExists parentDir;
+          # Only try to check file if parent directory is accessible
+          result = if parentAccessible then 
+            builtins.tryEval (builtins.pathExists path)
+          else 
+            { success = true; value = false; };
+        in 
+        if result.success then result.value else false;
 
       # Find which directory contains the file (current or subdirectory)
       # Returns null if not found, "." if in current dir, or subdirectory name
@@ -60,10 +76,13 @@ let
           else
             # Check subdirectories (1 level deep)
             let
-              entries = if safeFileExists currentPwd then safeReadDir currentPwd else {};
+              entries = if safeDirExists currentPwd then safeReadDir currentPwd else {};
               subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
               findSubdir = subdir:
-                if safeFileExists (currentPwd + "/${subdir}/${file}")
+                let subdirPath = currentPwd + "/${subdir}";
+                in
+                # Only check files in subdirectories that are accessible
+                if safeDirExists subdirPath && safeFileExists (subdirPath + "/${file}")
                 then subdir
                 else null;
               found = builtins.filter (x: x != null) (map findSubdir subdirs);
