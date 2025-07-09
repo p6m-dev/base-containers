@@ -1,22 +1,10 @@
 #!/bin/sh
-# Wrapper for she-bangs invoking "env bash" or "env sh"
+# Wrapper for shebangs like #!/usr/bin/env sh or #!/usr/bin/env bash
 
 # Source nix environment if available
 if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-    
-    # Check if there's a local .envrc file
-    if [ -f "$(pwd)/.envrc" ]; then
-        # Use direnv for local .envrc files
-        exec direnv exec "$(pwd)" /usr/bin/_env "$@"
-    else
-        # Use the global nix shell  
-        if [ $# -eq 0 ]; then
-            exec nix-shell /etc/nix/default.nix --run "/usr/bin/_env"
-        else
-            exec nix-shell /etc/nix/default.nix --run "/usr/bin/_env $*"
-        fi
-    fi
+    exec nix-shell /etc/nix/default.nix --command "/usr/bin/_env $*"
 fi
 
 # Fallback: run without nix environment

@@ -42,10 +42,22 @@ RUN rm /home/dev/.nix-defexpr/channels_root && \
 
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && nix --version
 
-# Smoke test: validate default.nix syntax only
+# Smoke test: validate default.nix
 RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && \
     nix-instantiate --parse /etc/nix/default.nix > /dev/null && \
     echo "✓ /etc/nix/default.nix syntax validated"
+
+# Test shebang script functionality
+COPY --chmod=755 tests/test_script.sh /tmp/test_script.sh
+RUN /tmp/test_script.sh && \
+    echo "✓ Shebang script execution works" && \
+    sudo rm -f /tmp/test_script.sh
+
+# Test shebang script with arguments
+COPY --chmod=755 tests/test_args.sh /tmp/test_args.sh
+RUN /tmp/test_args.sh hello world "test with spaces" && \
+    echo "✓ Shebang script with arguments works" && \
+    sudo rm -f /tmp/test_args.sh
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "sleep", "infinity" ]
