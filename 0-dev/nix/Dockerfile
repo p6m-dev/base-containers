@@ -47,16 +47,5 @@ RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && \
     nix-instantiate --parse /etc/nix/default.nix > /dev/null && \
     echo "✓ /etc/nix/default.nix syntax validated"
 
-# Smoke test: verify env wrapper runtime behavior
-# RUN cd /tmp && \
-#     echo 'use nix /etc/nix/default.nix' > .envrc && \
-#     direnv allow && \
-#     timeout 30 /usr/bin/env echo "✓ env wrapper with local .envrc test passed" && \
-#     cd / && \
-#     timeout 30 /usr/bin/env echo "✓ env wrapper with global nix test passed" && \
-#     rm -rf /tmp/.envrc /tmp/.direnv && \
-#     nix-collect-garbage -d && \
-#     echo "✓ env wrapper runtime tests completed"
-
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "sleep", "infinity" ]
