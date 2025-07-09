@@ -9,4 +9,4 @@ hide_env_diff = true
 disable_makefile = false
 
 [whitelist]
-prefix = ["/.envrc", "/home/dev", "/ede/orgs"]
+prefix = ["/home/dev", "/ede/orgs"]

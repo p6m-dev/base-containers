@@ -1,2 +1,1 @@
-# Auto-allow ALL .envrc files
-direnv allow
+# Custom direnv configuration
