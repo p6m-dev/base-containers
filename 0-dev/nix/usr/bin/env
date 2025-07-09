@@ -4,8 +4,15 @@
 # Source nix environment if available
 if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-    exec direnv exec "$(pwd)" /usr/bin/_env "$@"
-else
-    # Fallback: run without nix environment
-    exec /usr/bin/_env "$@"
 fi
+
+# Only use direnv for interactive shells, not for every command
+case "$1" in
+    bash|sh|zsh|fish)
+        if [ -t 0 ] && [ -t 1 ]; then
+            exec direnv exec "$(pwd)" /usr/bin/_env "$@"
+        fi
+        ;;
+esac
+
+exec /usr/bin/_env "$@"
