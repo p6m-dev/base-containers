@@ -31,16 +31,11 @@ let
   # Auto-detection based on project files (current dir and one level deep)
   detection =
     let
-      # Get the current working directory from NIX_PWD environment variable
-      nixPwd = builtins.getEnv "NIX_PWD";
+      # Get the current working directory from PWD environment variable (requires --impure)
+      currentPwd = builtins.getEnv "PWD";
       
-      # Show warning if NIX_PWD not set and use evaluation context as fallback
-      warningMessage = if nixPwd == "" then 
-        "⚠️  NIX_PWD not set, using Nix evaluation context (${toString ./.}) - set NIX_PWD in .envrc for subdirectory detection"
-      else null;
-      
-      # Use NIX_PWD if set, otherwise fall back to evaluation context
-      workingDir = if nixPwd != "" then nixPwd else toString ./.;
+      # Use PWD if available, otherwise fall back to evaluation context
+      workingDir = if currentPwd != "" then currentPwd else toString ./.;
       
       # Safe file existence check that handles permission errors
       safePathExists = path:
@@ -54,16 +49,16 @@ let
       # Find which directory contains the file (current or subdirectory)
       # Returns null if not found, "." if in current dir, or subdirectory name
       findFileLocation = file:
-        if nixPwd != "" then
+        if currentPwd != "" then
           # Check current directory first
-          if builtins.pathExists (nixPwd + "/${file}") then "."
+          if builtins.pathExists (currentPwd + "/${file}") then "."
           else
             # Check subdirectories (1 level deep)
             let
-              entries = if builtins.pathExists nixPwd then safeReadDir nixPwd else {};
+              entries = if builtins.pathExists currentPwd then safeReadDir currentPwd else {};
               subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
               findSubdir = subdir:
-                if builtins.pathExists (nixPwd + "/${subdir}/${file}")
+                if builtins.pathExists (currentPwd + "/${subdir}/${file}")
                 then subdir
                 else null;
               found = builtins.filter (x: x != null) (map findSubdir subdirs);
@@ -104,16 +99,10 @@ let
           detections;
 
         validResults = builtins.filter (r: r != null) results;
-        
-        # Include warning message if NIX_PWD not set
-        allMessages = if warningMessage != null then 
-          [warningMessage] ++ (map (r: r.message) validResults)
-        else 
-          map (r: r.message) validResults;
       in
       {
         packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
-        messages = allMessages;
+        messages = map (r: r.message) validResults;
       };
 
   # Combine all package sources
