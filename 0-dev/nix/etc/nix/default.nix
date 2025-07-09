@@ -31,6 +31,17 @@ let
   # Auto-detection based on project files (current dir and one level deep)
   detection =
     let
+      # Get the current working directory from NIX_PWD environment variable
+      nixPwd = builtins.getEnv "NIX_PWD";
+      
+      # Show warning if NIX_PWD not set and use evaluation context as fallback
+      warningMessage = if nixPwd == "" then 
+        "⚠️  NIX_PWD not set, using Nix evaluation context (${toString ./.}) - set NIX_PWD in .envrc for subdirectory detection"
+      else null;
+      
+      # Use NIX_PWD if set, otherwise fall back to evaluation context
+      workingDir = if nixPwd != "" then nixPwd else toString ./.;
+      
       # Safe file existence check that handles permission errors
       safePathExists = path:
         builtins.tryEval (builtins.pathExists path) // { value = false; };
@@ -40,60 +51,70 @@ let
         let result = builtins.tryEval (builtins.readDir path);
         in if result.success then result.value else { };
 
-      fileExists = file: (safePathExists (./. + "/${file}")).value;
-
-      findFileInSubdirs = file:
-        let
-          currentDirExists = (safePathExists ./.).value;
-          entries = if currentDirExists then safeReadDir ./. else { };
-          subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
-          findSubdir = subdir:
+      # Find which directory contains the file (current or subdirectory)
+      # Returns null if not found, "." if in current dir, or subdirectory name
+      findFileLocation = file:
+        if nixPwd != "" then
+          # Check current directory first
+          if builtins.pathExists (nixPwd + "/${file}") then "."
+          else
+            # Check subdirectories (1 level deep)
             let
-              path = ./. + "/${subdir}";
-              subdirExists = (safePathExists path).value;
-              fileInSubdir = (safePathExists (path + "/${file}")).value;
+              entries = if builtins.pathExists nixPwd then safeReadDir nixPwd else {};
+              subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
+              findSubdir = subdir:
+                if builtins.pathExists (nixPwd + "/${subdir}/${file}")
+                then subdir
+                else null;
+              found = builtins.filter (x: x != null) (map findSubdir subdirs);
             in
-            if subdirExists && fileInSubdir
-            then subdir
-            else null;
-          found = builtins.filter (x: x != null) (map findSubdir subdirs);
-        in
-        if builtins.length found > 0 then builtins.head found else null;
-
-      getPath = file:
-        if fileExists file then "."
+            if builtins.length found > 0 then builtins.head found else null
         else
-          let subdir = findFileInSubdirs file;
-          in if subdir != null then subdir else null;
+          # Fall back to evaluation context (no subdirectory detection)
+          if (safePathExists (./. + "/${file}")).value then "." else null;
+
+      # Check if file exists (wrapper around findFileLocation)
+      fileExists = file: findFileLocation file != null;
+
+      # Get path where file is located (same as findFileLocation)
+      getPath = file: findFileLocation file;
 
       detections = [
-        { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
-        { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
-        { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
-        { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
-        { file = "go.mod"; packages = packageSets.go; name = "Go"; }
-        { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
-        { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
-        { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
-        { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
-      ];
+          { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
+          { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
+          { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
+          { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
+          { file = "go.mod"; packages = packageSets.go; name = "Go"; }
+          { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
+          { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
+          { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
+          { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
+        ];
 
-      results = map
-        (d:
-          let path = getPath d.file;
-          in if path != null then {
-            packages = d.packages;
-            message = "${d.name} project detected at ${path}";
-          } else null
-        )
-        detections;
+        results = map
+          (d:
+            let 
+              path = getPath d.file;
+              exists = fileExists d.file;
+            in if path != null then {
+              packages = d.packages;
+              message = "${d.name} project detected at ${path}";
+            } else null
+          )
+          detections;
 
-      validResults = builtins.filter (r: r != null) results;
-    in
-    {
-      packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
-      messages = map (r: r.message) validResults;
-    };
+        validResults = builtins.filter (r: r != null) results;
+        
+        # Include warning message if NIX_PWD not set
+        allMessages = if warningMessage != null then 
+          [warningMessage] ++ (map (r: r.message) validResults)
+        else 
+          map (r: r.message) validResults;
+      in
+      {
+        packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
+        messages = allMessages;
+      };
 
   # Combine all package sources
   extraPkgs = packages ++ envPackages ++ detection.packages;

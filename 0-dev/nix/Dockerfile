@@ -47,17 +47,39 @@ RUN . /home/dev/.nix-profile/etc/profile.d/nix.sh && \
     nix-instantiate --parse /etc/nix/default.nix > /dev/null && \
     echo "✓ /etc/nix/default.nix syntax validated"
 
-# Test shebang script functionality
+# Run all tests in a single layer and cleanup
 COPY --chmod=755 tests/test_script.sh /tmp/test_script.sh
-RUN /tmp/test_script.sh && \
-    echo "✓ Shebang script execution works" && \
-    sudo rm -f /tmp/test_script.sh
-
-# Test shebang script with arguments
 COPY --chmod=755 tests/test_args.sh /tmp/test_args.sh
-RUN /tmp/test_args.sh hello world "test with spaces" && \
+COPY --chmod=755 tests/test_default_env.sh /tmp/test_default_env.sh
+COPY --chmod=755 tests/test_envrc_nodejs.sh /tmp/test_envrc_nodejs.sh
+COPY tests/parent-project /tmp/parent-project
+RUN set -e && \
+    # Test shebang script functionality
+    /tmp/test_script.sh && \
+    echo "✓ Shebang script execution works" && \
+    \
+    # Test shebang script with arguments
+    /tmp/test_args.sh hello world "test with spaces" && \
     echo "✓ Shebang script with arguments works" && \
-    sudo rm -f /tmp/test_args.sh
+    \
+    # Test default environment (no .envrc)
+    cd /tmp && /tmp/test_default_env.sh && \
+    echo "✓ Default environment test works" && \
+    \
+    # Test .envrc environment with Node.js project (parent directory with subdirectory)
+    cd /tmp/parent-project && \
+    direnv allow && \
+    /tmp/test_envrc_nodejs.sh && \
+    echo "✓ .envrc Node.js environment test works" && \
+    \
+    # Cleanup test files
+    sudo rm -rf /tmp/test_*.sh /tmp/parent-project && \
+    \
+    # Cleanup Nix store to reduce image size
+    . /home/dev/.nix-profile/etc/profile.d/nix.sh && \
+    nix-collect-garbage -d && \
+    sudo rm -rf /nix/var/nix/gcroots/auto/* && \
+    nix-store --optimize
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "sleep", "infinity" ]
