@@ -86,5 +86,5 @@ RUN set -e && \
     sudo rm -rf /nix/var/nix/gcroots/auto/* && \
     nix-store --optimize
 
-ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
+ENTRYPOINT [ "/bin/bash", "-c" ]
 CMD [ "sleep", "infinity" ]
