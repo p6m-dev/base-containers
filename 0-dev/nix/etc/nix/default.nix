@@ -49,7 +49,7 @@ let
       # Safe file existence check that ignores permission errors
       safeFileExists = path:
         let result = builtins.tryEval (builtins.pathExists path);
-        in result.success && result.value;
+        in if result.success then result.value else false;
 
       # Find which directory contains the file (current or subdirectory)
       # Returns null if not found, "." if in current dir, or subdirectory name

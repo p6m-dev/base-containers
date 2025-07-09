@@ -52,6 +52,7 @@ COPY --chmod=755 tests/test_script.sh /tmp/test_script.sh
 COPY --chmod=755 tests/test_args.sh /tmp/test_args.sh
 COPY --chmod=755 tests/test_default_env.sh /tmp/test_default_env.sh
 COPY --chmod=755 tests/test_envrc_nodejs.sh /tmp/test_envrc_nodejs.sh
+COPY --chmod=755 tests/test_safe_file_exists.sh /tmp/test_safe_file_exists.sh
 COPY tests/parent-project /tmp/parent-project
 RUN set -e && \
     # Test shebang script functionality
@@ -71,6 +72,10 @@ RUN set -e && \
     direnv allow && \
     /tmp/test_envrc_nodejs.sh && \
     echo "✓ .envrc Node.js environment test works" && \
+    \
+    # Test safe file exists functionality
+    /tmp/test_safe_file_exists.sh && \
+    echo "✓ Safe file exists test works" && \
     \
     # Cleanup test files
     sudo rm -rf /tmp/test_*.sh /tmp/parent-project && \
