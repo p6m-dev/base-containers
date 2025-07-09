@@ -1,7 +1,7 @@
 [global]
 load_dotenv = true
 strict_env = false
-disable_stdin = false
+disable_stdin = true
 warn_timeout = "60s"
 log_format = ""
 bash_path = "/bin/bash"
