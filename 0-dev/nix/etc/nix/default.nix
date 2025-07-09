@@ -46,19 +46,24 @@ let
         let result = builtins.tryEval (builtins.readDir path);
         in if result.success then result.value else { };
 
+      # Safe file existence check that ignores permission errors
+      safeFileExists = path:
+        let result = builtins.tryEval (builtins.pathExists path);
+        in result.success && result.value;
+
       # Find which directory contains the file (current or subdirectory)
       # Returns null if not found, "." if in current dir, or subdirectory name
       findFileLocation = file:
         if currentPwd != "" then
           # Check current directory first
-          if builtins.pathExists (currentPwd + "/${file}") then "."
+          if safeFileExists (currentPwd + "/${file}") then "."
           else
             # Check subdirectories (1 level deep)
             let
-              entries = if builtins.pathExists currentPwd then safeReadDir currentPwd else {};
+              entries = if safeFileExists currentPwd then safeReadDir currentPwd else {};
               subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
               findSubdir = subdir:
-                if builtins.pathExists (currentPwd + "/${subdir}/${file}")
+                if safeFileExists (currentPwd + "/${subdir}/${file}")
                 then subdir
                 else null;
               found = builtins.filter (x: x != null) (map findSubdir subdirs);
