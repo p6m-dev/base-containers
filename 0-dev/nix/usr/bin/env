@@ -11,7 +11,7 @@ if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
         exec direnv exec "$(pwd)" /usr/bin/_env "$@"
     else
         # Use the global nix shell
-        exec nix-shell /etc/nix/default.nix --impure --command "/usr/bin/_env $*"
+        exec nix-shell /etc/nix/default.nix --log-format bar -Q --impure --command "/usr/bin/_env $*"
     fi
 fi
 
