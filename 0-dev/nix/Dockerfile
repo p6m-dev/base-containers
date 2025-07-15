@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y \
     direnv \
     && rm -rf /var/lib/apt/lists/*
 
-RUN usermod -l dev -d /home/dev -m ubuntu && \
-    groupmod -n dev ubuntu && \
+RUN usermod -l dev -d /home/dev -m -u 1000 -c "dev" ubuntu && \
+    groupmod -n dev -g 1000 ubuntu && \
     echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 RUN mv /usr/bin/env /usr/bin/_env
