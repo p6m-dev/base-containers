@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     zsh \
     fish \
     direnv \
+    man-db \
     && rm -rf /var/lib/apt/lists/*
 
 RUN usermod -l dev -d /home/dev -m -u 1000 -c "dev" ubuntu && \
