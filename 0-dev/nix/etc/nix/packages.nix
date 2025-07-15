@@ -31,5 +31,5 @@ with pkgs;
   helm
   argocd
   awscli2
-  azure-cli-bin
+  azure-cli
 ]
