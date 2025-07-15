@@ -31,6 +31,8 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 ENV USER=dev
 ENV DIRENV_CONFIG=/etc/direnv
 ENV DIRENV_LOG_FORMAT=""
+ENV NIX_BUILD_CORES=1
+ENV NIX_LOG_LEVEL=warn
 
 SHELL ["/bin/bash", "-c"]
 RUN rm /home/dev/.nix-defexpr/channels_root && \
