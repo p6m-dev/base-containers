@@ -31,29 +31,29 @@ with pkgs;
   helm
   argocd
   awscli2
-  (stdenv.mkDerivation rec {
-    pname = "azure-cli";
-    version = "2.75.0";
+  # (stdenv.mkDerivation rec {
+  #   pname = "azure-cli";
+  #   version = "2.75.0";
 
-    src = fetchurl {
-      url = "https://packages.microsoft.com/repos/azure-cli/pool/main/a/azure-cli/azure-cli_${version}-1~noble_${
-        if stdenv.isAarch64 then "arm64" else "amd64"
-      }.deb";
-      sha256 =
-        if stdenv.isAarch64 then
-          "sha256-0yXbOQWW71cKcH0XXXVKijIOQ0/R8RZfiRNBhMIqDyg=" else
-          "sha256-EvOm8jZsfsyHyF18QNjCB8psq1bCK/loucaF6TzosWw=";
-    };
+  #   src = fetchurl {
+  #     url = "https://packages.microsoft.com/repos/azure-cli/pool/main/a/azure-cli/azure-cli_${version}-1~noble_${
+  #       if stdenv.isAarch64 then "arm64" else "amd64"
+  #     }.deb";
+  #     sha256 =
+  #       if stdenv.isAarch64 then
+  #         "sha256-0yXbOQWW71cKcH0XXXVKijIOQ0/R8RZfiRNBhMIqDyg=" else
+  #         "sha256-EvOm8jZsfsyHyF18QNjCB8psq1bCK/loucaF6TzosWw=";
+  #   };
 
-    nativeBuildInputs = [ dpkg ];
+  #   nativeBuildInputs = [ dpkg ];
 
-    dontUnpack = true;
+  #   dontUnpack = true;
 
-    installPhase = ''
-      dpkg -x $src tmp
-      mv tmp/etc $out/
-      mv tmp/opt $out/
-      mv tmp/usr $out/
-    '';
-  })
+  #   installPhase = ''
+  #     dpkg -x $src tmp
+  #     mv tmp/etc $out/
+  #     mv tmp/opt $out/
+  #     mv tmp/usr $out/
+  #   '';
+  # })
 ]
