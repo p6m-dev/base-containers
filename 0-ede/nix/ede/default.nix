@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, packages ? [ ] }:
 
 let
-  homePkgs = import /etc/nix/packages.nix { inherit pkgs; };
+  homePkgs = import ./packages.nix { inherit pkgs; };
 
   # Helper function to get packages from environment variable
   envPackages =
@@ -33,10 +33,10 @@ let
     let
       # Get the current working directory from PWD environment variable (requires --impure)
       currentPwd = builtins.getEnv "PWD";
-      
+
       # Use PWD if available, otherwise fall back to evaluation context
       workingDir = if currentPwd != "" then currentPwd else toString ./.;
-      
+
       # Safe file existence check that handles permission errors
       safePathExists = path:
         builtins.tryEval (builtins.pathExists path) // { value = false; };
@@ -54,29 +54,30 @@ let
       # Safe file existence check that ignores permission errors
       # First checks if the parent directory is accessible
       safeFileExists = path:
-        let 
+        let
           # Extract parent directory from path
           parentDir = builtins.dirOf path;
           # Check if parent directory is accessible first
           parentAccessible = safeDirExists parentDir;
           # Only try to check file if parent directory is accessible
-          result = if parentAccessible then 
-            builtins.tryEval (builtins.pathExists path)
-          else 
-            { success = true; value = false; };
-        in 
+          result =
+            if parentAccessible then
+              builtins.tryEval (builtins.pathExists path)
+            else
+              { success = true; value = false; };
+        in
         if result.success then result.value else false;
 
       # Find which directory contains the file (current or subdirectory)
       # Returns null if not found, "." if in current dir, or subdirectory name
       findFileLocation = file:
         if currentPwd != "" then
-          # Check current directory first
+        # Check current directory first
           if safeFileExists (currentPwd + "/${file}") then "."
           else
-            # Check subdirectories (1 level deep)
+          # Check subdirectories (1 level deep)
             let
-              entries = if safeDirExists currentPwd then safeReadDir currentPwd else {};
+              entries = if safeDirExists currentPwd then safeReadDir currentPwd else { };
               subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
               findSubdir = subdir:
                 let subdirPath = currentPwd + "/${subdir}";
@@ -89,7 +90,7 @@ let
             in
             if builtins.length found > 0 then builtins.head found else null
         else
-          # Fall back to evaluation context (no subdirectory detection)
+        # Fall back to evaluation context (no subdirectory detection)
           if (safePathExists (./. + "/${file}")).value then "." else null;
 
       # Check if file exists (wrapper around findFileLocation)
@@ -99,35 +100,36 @@ let
       getPath = file: findFileLocation file;
 
       detections = [
-          { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
-          { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
-          { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
-          { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
-          { file = "go.mod"; packages = packageSets.go; name = "Go"; }
-          { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
-          { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
-          { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
-          { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
-        ];
+        { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
+        { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
+        { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
+        { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
+        { file = "go.mod"; packages = packageSets.go; name = "Go"; }
+        { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
+        { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
+        { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
+        { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
+      ];
 
-        results = map
-          (d:
-            let 
-              path = getPath d.file;
-              exists = fileExists d.file;
-            in if path != null then {
-              packages = d.packages;
-              message = "${d.name} project detected at ${path}";
-            } else null
-          )
-          detections;
+      results = map
+        (d:
+          let
+            path = getPath d.file;
+            exists = fileExists d.file;
+          in
+          if path != null then {
+            packages = d.packages;
+            message = "${d.name} project detected at ${path}";
+          } else null
+        )
+        detections;
 
-        validResults = builtins.filter (r: r != null) results;
-      in
-      {
-        packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
-        messages = map (r: r.message) validResults;
-      };
+      validResults = builtins.filter (r: r != null) results;
+    in
+    {
+      packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
+      messages = map (r: r.message) validResults;
+    };
 
   # Combine all package sources
   extraPkgs = packages ++ envPackages ++ detection.packages;

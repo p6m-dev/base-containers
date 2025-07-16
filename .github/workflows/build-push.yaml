@@ -71,10 +71,10 @@ jobs:
             dockerfile: 0-dev/universal/Dockerfile
             context: 0-dev/universal
             variants: "linux/amd64" #,linux/arm64"
-          - name: dev
+          - name: ede
             version_tag: nix
-            dockerfile: 0-dev/nix/Dockerfile
-            context: 0-dev/nix
+            dockerfile: 0-ede/nix/Dockerfile
+            context: 0-ede/nix
             variants: "linux/amd64" #,linux/arm64"
     steps:
       - name: Checkout

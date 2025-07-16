@@ -1,1 +1,0 @@
-👋 Welcome to Enterprise Development Environments! You are on our default image. 
