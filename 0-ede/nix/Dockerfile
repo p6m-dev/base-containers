@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" ubuntu \
     && groupmod -n ede -g 1000 ubuntu \
     && usermod -aG staff ede \
-    && chsh -s /usr/bin/nix-shell ede \ 
+    # && chsh -s /usr/bin/nix-shell ede \ 
     && mkdir -p -m 2755 /nix /ede /state \
     && chown ede:staff /nix /ede /state \
     && setfacl -d -m u::rwx,g::rwx,o::r-- /ede /state \
