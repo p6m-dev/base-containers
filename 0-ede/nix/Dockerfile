@@ -44,7 +44,7 @@ RUN curl -L https://nixos.org/nix/install \
     && echo 'eval "$(direnv hook bash)"' >> ~/.bashrc \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
     && echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc \
-    && rm -rf /home/ede/.nix-defexpr/channels_root
+    && rm -rf /ede/.nix-defexpr/channels_root
 
 COPY etc /etc
 COPY ede /ede
