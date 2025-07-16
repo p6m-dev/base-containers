@@ -16,12 +16,14 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" ubuntu \
     && groupmod -n ede -g 1000 ubuntu \
-    && usermod -aG staff ede \ 
+    && usermod -aG staff ede \
+    && chsh -s /usr/bin/nix-shell ede \ 
     && mkdir -p -m 2755 /nix /ede /state \
     && chown ede:staff /nix /ede /state \
     && setfacl -d -m u::rwx,g::rwx,o::r-- /ede /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
-    && chmod 0440 /etc/sudoers.d/ede
+    && chmod 0440 /etc/sudoers.d/ede \
+    && mv /usr/bin/env /usr/bin/env_
 
 USER ede
 WORKDIR /ede
@@ -40,13 +42,9 @@ RUN curl -L https://nixos.org/nix/install \
     --yes \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
-    && rm -rf /ede/.nix-defexpr/channels_root \
-    && mv /usr/bin/env /usr/bin/env_
+    && rm -rf /ede/.nix-defexpr/channels_root
 
-COPY etc /etc
-COPY usr /usr
-COPY ede /ede
-COPY entrypoint.sh /entrypoint.sh
+COPY rootfs /
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD [ "sleep", "infinity" ]

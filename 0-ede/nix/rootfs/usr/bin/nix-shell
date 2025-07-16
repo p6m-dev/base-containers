@@ -1,0 +1,8 @@
+#!/bin/bash
+# Custom shell wrapper that enforces nix develop environment
+
+# Source nix profile
+source ~/.nix-profile/etc/profile.d/nix.sh
+
+# Execute bash in nix develop environment
+exec nix develop /ede --command bash "$@"
