@@ -27,7 +27,6 @@ RUN apt-get update && apt-get install -y \
 
 USER ede
 WORKDIR /ede
-SHELL ["/bin/bash", "-c"]
 
 ENV USER=ede \
     HOME=/ede \
@@ -35,8 +34,7 @@ ENV USER=ede \
     XDG_STATE_HOME=/state \
     NIX_LOG_LEVEL=warn
 
-RUN curl -L https://nixos.org/nix/install \
-    | sh -s -- \
+RUN curl -L https://nixos.org/nix/install | sh -s -- \
     --no-daemon \
     --no-modify-profile \
     --yes \
@@ -44,7 +42,5 @@ RUN curl -L https://nixos.org/nix/install \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
     && rm -rf /ede/.nix-defexpr/channels_root
 
-COPY rootfs /
-
-ENTRYPOINT ["/entrypoint.sh"]
+COPY fs /
 CMD [ "sleep", "infinity" ]
