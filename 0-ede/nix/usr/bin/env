@@ -5,15 +5,15 @@
 if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
     
-    # Check if there's a local .envrc file
-    if [ -f "$(pwd)/.envrc" ]; then
-        # Use direnv for local .envrc files
-        exec direnv exec "$(pwd)" /usr/bin/_env "$@"
+    # Check if there's a local flake.nix file
+    if [ -f "$(pwd)/flake.nix" ]; then
+        # Use nix develop for local flake environments
+        exec nix develop "$(pwd)" --command /usr/bin/env_ "$@"
     else
-        # Use the global nix shell
-        exec nix-shell /etc/nix/default.nix --log-format bar -Q --impure --command "/usr/bin/_env $*"
+        # Use nix develop with global flake
+        exec nix develop /ede --command /usr/bin/env_ "$@"
     fi
 fi
 
 # Fallback: run without nix environment
-exec /usr/bin/_env "$@"
+exec /usr/bin/env_ "$@"

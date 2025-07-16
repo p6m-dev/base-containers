@@ -5,7 +5,6 @@ RUN apt-get update && apt-get install -y \
     bash \
     ca-certificates \
     curl \
-    direnv \
     git \
     gnupg \
     man-db \
@@ -32,9 +31,7 @@ ENV USER=ede \
     HOME=/ede \
     NIX_IGNORE_SYMLINK_STORE=1 \
     XDG_STATE_HOME=/state \
-    NIX_LOG_LEVEL=warn \
-    DIRENV_CONFIG=/etc/direnv \
-    DIRENV_LOG_FORMAT=""
+    NIX_LOG_LEVEL=warn
 
 RUN curl -L https://nixos.org/nix/install \
     | sh -s -- \
@@ -42,40 +39,14 @@ RUN curl -L https://nixos.org/nix/install \
     --no-modify-profile \
     --yes \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc \
-    && echo 'eval "$(direnv hook bash)"' >> ~/.bashrc \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
-    && echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc \
-    && rm -rf /ede/.nix-defexpr/channels_root
+    && rm -rf /ede/.nix-defexpr/channels_root \
+    && mv /usr/bin/env /usr/bin/env_
 
 COPY etc /etc
+COPY usr /usr
 COPY ede /ede
+COPY entrypoint.sh /entrypoint.sh
 
-# # RUN mv /usr/bin/env /usr/bin/_env
-# COPY etc /etc
-# # COPY usr /usr
-
-# USER dev
-# WORKDIR /ede
-# ENV NIX_IGNORE_SYMLINK_STORE=1
-# ENV NIX_STORE_DIR=/ede/nix/store
-# ENV DIRENV_CONFIG=/etc/direnv
-# ENV DIRENV_LOG_FORMAT=""
-
-# RUN curl -L https://nixos.org/nix/install \
-#     | sh -s -- \
-#     --no-daemon \
-#     --no-modify-profile
-
-# ENV USER=dev
-# ENV DIRENV_CONFIG=/etc/direnv
-# ENV DIRENV_LOG_FORMAT=""
-# ENV NIX_LOG_LEVEL=warn
-
-# SHELL ["/bin/bash", "-c"]
-# RUN rm /home/dev/.nix-defexpr/channels_root && \
-#     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc && \
-#     echo 'eval "$(direnv hook bash)"' >> ~/.bashrc && \
-#     echo ". /home/dev/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc && \
-#     echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
-
-# CMD [ "sleep", "infinity" ]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD [ "sleep", "infinity" ]
