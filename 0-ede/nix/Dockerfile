@@ -14,9 +14,8 @@ RUN apt-get update && apt-get install -y \
     jq \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean \
-    && usermod -l ede -d /ede -m -u 1000 -c "ede" ubuntu \
-    && groupmod -n ede -g 1000 ubuntu \
-    && usermod -aG staff ede \
+    && usermod -l ede -d /ede -m -u 1000 -c "ede" -g staff ubuntu \
+    && groupdel ubuntu \
     && mkdir -p -m 6755 /nix /ede /state \
     && chown ede:staff /nix /ede /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
@@ -40,7 +39,7 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- \
     && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
     && rm -rf /ede/.nix-defexpr/channels_root
 
-COPY --chown=dev:staff fs/ede /ede
+COPY --chown=ede:staff fs/ede /ede
 COPY --chown=root:root fs/etc /etc
 COPY --chown=root:root fs/usr /usr
 CMD [ "sleep", "infinity" ]
