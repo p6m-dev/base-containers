@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     xz-utils \
     zsh \
+    jq \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" ubuntu \
