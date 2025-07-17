@@ -1,7 +1,8 @@
-{ pkgs ? import <nixpkgs> { }, packages ? [ ] }:
+# Can be called as flake outputs or as mkShell
+{ pkgs ? import <nixpkgs> { }, packages ? [ ], nixpkgs ? null, system ? builtins.currentSystem }:
 
 let
-  homePkgs = import ./packages.nix { inherit pkgs; };
+  homePkgs = import ./packages.nix { inherit system; };
 
   # Helper function to get packages from environment variable
   envPackages =
@@ -135,24 +136,52 @@ let
   extraPkgs = packages ++ envPackages ++ detection.packages;
   extraPkgsCount = builtins.length extraPkgs;
   allPkgs = homePkgs ++ extraPkgs;
+
+  # Shell derivation
+  shell = pkgs.mkShell {
+    buildInputs = allPkgs;
+
+    shellHook = ''
+      echo "🚀 Nix development environment loaded"
+      echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
+      
+      ${pkgs.lib.concatStringsSep "\n    " (map (msg: "echo \"🔍 ${msg}\"") detection.messages)}
+      
+      if [ ${toString extraPkgsCount} -eq 0 ]; then
+        echo "➕ No additional packages loaded"
+      else
+        echo "➕ Additional packages (${toString extraPkgsCount}):"
+        for pkg in ${pkgs.lib.concatStringsSep " " (map (p: p.name or p.pname or "unknown") extraPkgs)}; do
+          printf "   • %s\n" "$pkg"
+        done
+      fi
+    '';
+  };
+
+  # Flake outputs function
+  flakeOutputs = nixpkgs:
+    let
+      systems = [ "x86_64-linux" "aarch64-linux" ];
+      forAllSystems = f: builtins.listToAttrs (map (system: { name = system; value = f system; }) systems);
+    in
+    {
+      devShells = forAllSystems (system: {
+        default = import /ede/default.nix {
+          pkgs = import nixpkgs { inherit system; };
+          inherit system;
+        };
+      });
+      packages = forAllSystems (system: {
+        default = let
+          pkgsForSystem = import nixpkgs { inherit system; };
+          allPkgs = import /ede/packages.nix { system = system; };
+        in pkgsForSystem.buildEnv {
+          name = "ede-packages";
+          paths = allPkgs;
+        };
+      });
+    };
 in
 
-pkgs.mkShell {
-  buildInputs = allPkgs;
-
-  shellHook = ''
-    echo "🚀 Nix development environment loaded"
-    echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
-    
-    ${pkgs.lib.concatStringsSep "\n    " (map (msg: "echo \"🔍 ${msg}\"") detection.messages)}
-    
-    if [ ${toString extraPkgsCount} -eq 0 ]; then
-      echo "➕ No additional packages loaded"
-    else
-      echo "➕ Additional packages (${toString extraPkgsCount}):"
-      for pkg in ${pkgs.lib.concatStringsSep " " (map (p: p.name or p.pname or "unknown") extraPkgs)}; do
-        printf "   • %s\n" "$pkg"
-      done
-    fi
-  '';
-}
+# Return flake outputs if nixpkgs is provided, otherwise return shell
+if nixpkgs != null then flakeOutputs nixpkgs else shell

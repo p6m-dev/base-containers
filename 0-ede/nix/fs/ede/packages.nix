@@ -1,4 +1,16 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ system ? builtins.currentSystem }:
+
+let
+  nixpkgsUrl = 
+    let envUrl = builtins.getEnv "NIXPKGS_URL";
+    in if envUrl != "" then envUrl else "github:NixOS/nixpkgs/nixos-unstable";
+  
+  systems = [ "x86_64-linux" "aarch64-linux" ];
+  forAllSystems = f: builtins.listToAttrs (map (system: { name = system; value = f system; }) systems);
+  
+  nixpkgs = builtins.getFlake nixpkgsUrl;
+  pkgs = nixpkgs.legacyPackages.${system};
+in
 
 with pkgs;
 [

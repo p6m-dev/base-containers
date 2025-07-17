@@ -29,7 +29,9 @@ ENV USER=ede \
     HOME=/ede \
     NIX_IGNORE_SYMLINK_STORE=1 \
     XDG_STATE_HOME=/state \
-    NIX_LOG_LEVEL=warn
+    NIX_LOG_LEVEL=warn \
+    NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
+    NIX_COLORS=1
 
 RUN curl -L https://nixos.org/nix/install | sh -s -- \
     --no-daemon \
@@ -41,5 +43,6 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- \
 
 COPY --chown=ede:staff fs/ede /ede
 COPY --chown=root:root fs/etc /etc
+COPY --chown=ede:staff fs/flakes /flakes
 COPY --chown=root:root fs/usr /usr
 CMD [ "sleep", "infinity" ]

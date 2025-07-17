@@ -7,11 +7,11 @@ if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     
     # Check if there's a local flake.nix file
     if [ -f "$(pwd)/flake.nix" ]; then
-        # Use nix shell for local flake environments
-        exec nix shell "$(pwd)" --command /usr/bin/env_ "$@"
+        # Use nix develop for local flake environments
+        exec nix shell "$(pwd)" --impure --command /usr/bin/env_ "$@"
     else
         # Use nix shell with global flake
-        exec nix shell /ede --command /usr/bin/env_ "$@"
+        exec nix shell /flakes/default#default --impure --command /usr/bin/env_ "$@"
     fi
 fi
 
