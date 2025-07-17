@@ -11,7 +11,7 @@ if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
         exec nix shell "$(pwd)" --impure --command /usr/bin/env_ "$@"
     else
         # Use nix shell with global flake
-        exec nix shell /flakes/default#default --impure --command /usr/bin/env_ "$@"
+        PWD=$(pwd) exec nix shell /flakes/default#default --impure --command /usr/bin/env_ "$@"
     fi
 fi
 
