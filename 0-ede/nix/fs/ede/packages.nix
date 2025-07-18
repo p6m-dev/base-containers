@@ -24,7 +24,7 @@ with pkgs;
   libtool
 
   # EDE Tools
-  coder
+  # coder
 
   # Utilities
   fzf
