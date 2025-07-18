@@ -27,11 +27,12 @@ WORKDIR /ede
 
 ENV USER=ede \
     HOME=/ede \
+    NIX_COLORS=1 \
     NIX_IGNORE_SYMLINK_STORE=1 \
-    XDG_STATE_HOME=/state \
     NIX_LOG_LEVEL=warn \
+    NIXPKGS_ALLOW_UNFREE=1 \
     NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
-    NIX_COLORS=1
+    XDG_STATE_HOME=/state 
 
 RUN curl -L https://nixos.org/nix/install | sh -s -- \
     --no-daemon \
