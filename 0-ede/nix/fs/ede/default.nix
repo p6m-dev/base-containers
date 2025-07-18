@@ -20,7 +20,6 @@ let
     go = with pkgs; [ go gopls ];
     java = with pkgs; [ openjdk17 maven gradle ];
     docker = with pkgs; [ docker docker-compose ];
-    terraform = with pkgs; [ terraform terraform-ls ];
   };
 
   # Helper function to get package set by name
@@ -109,7 +108,6 @@ let
         { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
         { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
         { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
-        { file = "main.tf"; packages = packageSets.terraform; name = "Terraform"; }
       ];
 
       results = map
@@ -172,13 +170,15 @@ let
         };
       });
       packages = forAllSystems (system: {
-        default = let
-          pkgsForSystem = import nixpkgs { inherit system; };
-          allPkgs = import /ede/packages.nix { system = system; };
-        in pkgsForSystem.buildEnv {
-          name = "ede-packages";
-          paths = allPkgs;
-        };
+        default =
+          let
+            pkgsForSystem = import nixpkgs { inherit system; };
+            allPkgs = import /ede/packages.nix { system = system; };
+          in
+          pkgsForSystem.buildEnv {
+            name = "ede-packages";
+            paths = allPkgs;
+          };
       });
     };
 in
