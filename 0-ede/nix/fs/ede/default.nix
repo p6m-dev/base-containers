@@ -130,17 +130,24 @@ let
       messages = map (r: r.message) validResults;
     };
 
+  # OpenSSL
+  openssl = pkgs.symlinkJoin {
+    name = "openssl-full";
+    paths = [ (pkgs.openssl.override { shared = true; }) pkgs.openssl.dev ];
+  };
+
   # Combine all package sources
   extraPkgs = packages ++ envPackages ++ detection.packages;
   extraPkgsCount = builtins.length extraPkgs;
-  allPkgs = homePkgs ++ extraPkgs;
+  allPkgs = pkgs.lib.unique (homePkgs ++ extraPkgs ++ [ openssl ]);
 
   # Shell derivation
   shell = pkgs.mkShell {
     buildInputs = allPkgs;
 
     shellHook = ''
-      export OPENSSL_DIR=${pkgs.symlinkJoin { name = "openssl-full"; paths = [ pkgs.openssl pkgs.openssl.dev ]; }}
+      export OPENSSL_DIR=${openssl}
+      export PKG_CONFIG_PATH=${openssl}/lib/pkgconfig
       
       echo "🚀 Nix development environment loaded"
       echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
