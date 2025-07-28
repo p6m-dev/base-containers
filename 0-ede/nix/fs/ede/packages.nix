@@ -14,7 +14,7 @@ let
   openssl = pkgs.symlinkJoin {
     name = "openssl";
     paths = [
-      (pkgs.openssl_1_1.override { shared = true; })
+      pkgs.openssl_1_1
       pkgs.openssl_1_1.dev
     ];
   };
