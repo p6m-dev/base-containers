@@ -3,9 +3,8 @@
 
 let
   homePkgs = import ./packages.nix { inherit system; };
-  openssl = builtins.head (
-    builtins.filter (pkg: (pkg.pname or "") == "openssl") homePkgs
-  );
+  openssl = builtins.head (builtins.filter (pkg: (pkg.pname or "") == "openssl") homePkgs);
+  opensslDev = builtins.head (builtins.filter (pkg: (pkg.pname or "") == "openssl.dev") homePkgs);
 
   # Helper function to get packages from environment variable
   envPackages =
@@ -143,10 +142,10 @@ let
     buildInputs = allPkgs;
 
     shellHook = ''
-      export OPENSSL_DIR=${openssl}
+      export OPENSSL_DIR=${opensslDev}
       export OPENSSL_LIB_DIR=${openssl}/lib
-      export OPENSSL_INCLUDE_DIR=${openssl}/include
-      export PKG_CONFIG_PATH=${openssl}/lib/pkgconfig
+      export OPENSSL_INCLUDE_DIR=${opensslDev}/include
+      export PKG_CONFIG_PATH=${openssl}/lib/pkgconfig:${opensslDev}/lib/pkgconfig
       
       echo "🚀 Nix development environment loaded"
       echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
