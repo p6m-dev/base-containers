@@ -140,10 +140,10 @@ let
     buildInputs = allPkgs;
 
     shellHook = ''
-      export OPENSSL_DIR=${allPkgs.openssl.dev}
-      export OPENSSL_LIB_DIR=${allPkgs.openssl}/lib
-      export OPENSSL_INCLUDE_DIR=${allPkgs.openssl.dev}/include
-      export PKG_CONFIG_PATH=${allPkgs.openssl}/lib/pkgconfig:${allPkgs.openssl.dev}/lib/pkgconfig
+      export OPENSSL_DIR=${pkgs.openssl.dev}
+      export OPENSSL_LIB_DIR=${pkgs.openssl}/lib
+      export OPENSSL_INCLUDE_DIR=${pkgs.openssl.dev}/include
+      export PKG_CONFIG_PATH=${pkgs.openssl}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig
       
       echo "🚀 Nix development environment loaded"
       echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
