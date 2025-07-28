@@ -3,6 +3,9 @@
 
 let
   homePkgs = import ./packages.nix { inherit system; };
+  openssl = builtins.head (
+    builtins.filter (pkg: (pkg.pname or "") == "openssl") homePkgs
+  );
 
   # Helper function to get packages from environment variable
   envPackages =
@@ -129,12 +132,6 @@ let
       packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
       messages = map (r: r.message) validResults;
     };
-
-  # OpenSSL
-  openssl = pkgs.symlinkJoin {
-    name = "openssl-full";
-    paths = [ (pkgs.openssl.override { shared = true; }) pkgs.openssl.dev ];
-  };
 
   # Combine all package sources
   extraPkgs = packages ++ envPackages ++ detection.packages;

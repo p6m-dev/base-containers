@@ -10,6 +10,14 @@ let
 
   nixpkgs = builtins.getFlake nixpkgsUrl;
   pkgs = nixpkgs.legacyPackages.${system};
+
+  openssl = pkgs.symlinkJoin {
+    name = "openssl";
+    paths = [
+      (pkgs.openssl_1_1.override { shared = true; })
+      pkgs.openssl_1_1.dev
+    ];
+  };
 in
 
 with pkgs;
@@ -23,7 +31,6 @@ with pkgs;
   automake
   libtool
   openssl
-  openssl.dev
 
   # EDE Tools
   # coder
