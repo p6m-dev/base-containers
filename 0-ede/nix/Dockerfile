@@ -34,6 +34,7 @@ ENV USER=ede \
     NIX_LOG_LEVEL=warn \
     NIXPKGS_ALLOW_UNFREE=1 \
     NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
+    OPENSSL_DIR=/usr \
     XDG_STATE_HOME=/state 
 
 RUN curl -L https://nixos.org/nix/install | sh -s -- \
