@@ -140,6 +140,8 @@ let
     buildInputs = allPkgs;
 
     shellHook = ''
+      export OPENSSL_DIR=${pkgs.openssl.dev}/..
+
       echo "🚀 Nix development environment loaded"
       echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
       

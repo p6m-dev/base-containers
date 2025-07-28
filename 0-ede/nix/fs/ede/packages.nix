@@ -22,6 +22,7 @@ with pkgs;
   autoconf
   automake
   libtool
+  openssl.dev
 
   # EDE Tools
   # coder
