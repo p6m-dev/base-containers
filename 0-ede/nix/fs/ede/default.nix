@@ -135,7 +135,7 @@ let
   # Combine all package sources
   extraPkgs = packages ++ envPackages ++ detection.packages;
   extraPkgsCount = builtins.length extraPkgs;
-  allPkgs = pkgs.lib.unique (homePkgs ++ extraPkgs ++ [ openssl ]);
+  allPkgs = pkgs.lib.unique (homePkgs ++ extraPkgs);
 
   # Shell derivation
   shell = pkgs.mkShell {
