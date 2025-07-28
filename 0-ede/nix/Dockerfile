@@ -4,11 +4,12 @@ RUN apt-get update && apt-get install -y \
     acl \
     bash \
     ca-certificates \
-    libssl-dev \
     curl \
     git \
     gnupg \
+    libssl-dev \
     man-db \
+    pkg-config \
     sudo \
     xz-utils \
     zsh \
