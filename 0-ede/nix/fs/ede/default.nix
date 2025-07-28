@@ -144,6 +144,8 @@ let
 
     shellHook = ''
       export OPENSSL_DIR=${openssl}
+      export OPENSSL_LIB_DIR=${openssl}/lib
+      export OPENSSL_INCLUDE_DIR=${openssl}/include
       export PKG_CONFIG_PATH=${openssl}/lib/pkgconfig
       
       echo "🚀 Nix development environment loaded"

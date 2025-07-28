@@ -13,10 +13,7 @@ let
 
   openssl = pkgs.symlinkJoin {
     name = "openssl";
-    paths = [
-      pkgs.openssl_1_1
-      pkgs.openssl_1_1.dev
-    ];
+    paths = [ pkgs.openssl pkgs.openssl.dev ];
   };
 in
 
