@@ -32,6 +32,8 @@ with pkgs;
   fzf
   yq-go
   jq
+  grpc-tools
+  vim
 
   # Kubernetes - Keep lightweight/essential tools in Nix
   kubectl
