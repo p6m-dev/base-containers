@@ -30,9 +30,10 @@ with pkgs;
 
   # Utilities
   fzf
-  yq-go
-  jq
   grpc-tools
+  jq
+  net-tools
+  yq-go
   vim
 
   # Kubernetes - Keep lightweight/essential tools in Nix
