@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" -g staff ubuntu \
     && groupdel ubuntu \
+    && groupadd -g 2375 docker \
+    && usermod -aG docker ede \
     && mkdir -p -m 6755 /nix /ede /state \
     && chown ede:staff /nix /ede /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
