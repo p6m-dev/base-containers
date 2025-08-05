@@ -1,16 +1,13 @@
 # Can be called as flake outputs or as mkShell
-{ pkgs ? import <nixpkgs> { }, packages ? [ ], nixpkgs ? null, system ? builtins.currentSystem }:
+{ packages ? [ ], system ? builtins.currentSystem }:
 
 let
-  homePkgs = import ./packages.nix { inherit system; };
+  packageSet = import ./packages.nix { inherit system; };
+  pkgs = packageSet.pkgs;
+  homePkgs = packageSet.packages;
 
-  # Helper function to get packages from environment variable
-  envPackages =
-    let
-      envVar = builtins.getEnv "EXTRA_PACKAGES";
-      packageNames = if envVar != "" then pkgs.lib.splitString "," envVar else [ ];
-    in
-    map (name: pkgs.lib.getAttr (pkgs.lib.trim name) pkgs) packageNames;
+  # Helper function to get packages from environment variable (disabled in pure mode)
+  envPackages = [ ];
 
   # Predefined package sets for common development scenarios
   packageSets = {
@@ -31,11 +28,8 @@ let
   # Auto-detection based on project files (current dir and one level deep)
   detection =
     let
-      # Get the current working directory from PWD environment variable (requires --impure)
-      currentPwd = builtins.getEnv "PWD";
-
-      # Use PWD if available, otherwise fall back to evaluation context
-      workingDir = if currentPwd != "" then currentPwd else toString ./.;
+      # Use evaluation context (pure mode compatible)
+      workingDir = toString ./.;
 
       # Safe file existence check that handles permission errors
       safePathExists = path:
@@ -68,30 +62,9 @@ let
         in
         if result.success then result.value else false;
 
-      # Find which directory contains the file (current or subdirectory)
-      # Returns null if not found, "." if in current dir, or subdirectory name
+      # Check if file exists in current directory (pure mode compatible)
       findFileLocation = file:
-        if currentPwd != "" then
-        # Check current directory first
-          if safeFileExists (currentPwd + "/${file}") then "."
-          else
-          # Check subdirectories (1 level deep)
-            let
-              entries = if safeDirExists currentPwd then safeReadDir currentPwd else { };
-              subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
-              findSubdir = subdir:
-                let subdirPath = currentPwd + "/${subdir}";
-                in
-                # Only check files in subdirectories that are accessible
-                if safeDirExists subdirPath && safeFileExists (subdirPath + "/${file}")
-                then subdir
-                else null;
-              found = builtins.filter (x: x != null) (map findSubdir subdirs);
-            in
-            if builtins.length found > 0 then builtins.head found else null
-        else
-        # Fall back to evaluation context (no subdirectory detection)
-          if (safePathExists (./. + "/${file}")).value then "." else null;
+        if (safePathExists (./. + "/${file}")).value then "." else null;
 
       # Check if file exists (wrapper around findFileLocation)
       fileExists = file: findFileLocation file != null;
@@ -162,31 +135,48 @@ let
   };
 
   # Flake outputs function
-  flakeOutputs = nixpkgs:
+  flakeOutputs =
     let
-      systems = [ "x86_64-linux" "aarch64-linux" ];
+      systems = packageSet.systems;
       forAllSystems = f: builtins.listToAttrs (map (system: { name = system; value = f system; }) systems);
     in
     {
       devShells = forAllSystems (system: {
-        default = import /ede/default.nix {
-          pkgs = import nixpkgs { inherit system; };
-          inherit system;
-        };
+        default = 
+          let packageSet = import ./packages.nix { inherit system; };
+          in packageSet.pkgs.mkShell {
+            buildInputs = packageSet.packages;
+            shellHook = shell.shellHook;
+          };
       });
       packages = forAllSystems (system: {
-        default =
-          let
-            pkgsForSystem = import nixpkgs { inherit system; };
-            allPkgs = import /ede/packages.nix { system = system; };
-          in
-          pkgsForSystem.buildEnv {
+        default = 
+          let packageSet = import ./packages.nix { inherit system; };
+          in packageSet.pkgs.buildEnv {
             name = "ede-packages";
-            paths = allPkgs;
+            paths = packageSet.packages;
           };
       });
     };
+
+  # Flake outputs helpers
+  systems = packageSet.systems;
+  forAllSystems = f: builtins.listToAttrs (map (system: { name = system; value = f system; }) systems);
 in
 
-# Return flake outputs if nixpkgs is provided, otherwise return shell
-if nixpkgs != null then flakeOutputs nixpkgs else shell
+# Export both shell and flake outputs
+{
+  inherit shell;
+  
+  devShells = forAllSystems (system: {
+    default = (import ./shell.nix { inherit system; }).shell;
+  });
+  packages = forAllSystems (system: {
+    default = 
+      let ps = import ./packages.nix { inherit system; };
+      in ps.pkgs.buildEnv {
+        name = "ede-packages";
+        paths = ps.packages;
+      };
+  });
+}

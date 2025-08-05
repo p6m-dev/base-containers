@@ -1,0 +1,4 @@
+{
+  outputs = { ... }:
+    import ./shell.nix { };
+}

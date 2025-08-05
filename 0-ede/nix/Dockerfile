@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     bash \
     ca-certificates \
     curl \
+    direnv \
     git \
     gnupg \
     man-db \
@@ -26,25 +27,36 @@ RUN apt-get update && apt-get install -y \
 USER ede
 WORKDIR /ede
 
-ENV USER=ede \
-    HOME=/ede \
-    NIX_COLORS=1 \
-    NIX_IGNORE_SYMLINK_STORE=1 \
-    NIX_LOG_LEVEL=warn \
-    NIXPKGS_ALLOW_UNFREE=1 \
-    NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
-    XDG_STATE_HOME=/state 
+COPY --chown=ede:staff fs/ede /ede
+COPY --chown=root:root fs/etc /etc
 
 RUN curl -L https://nixos.org/nix/install | sh -s -- \
     --no-daemon \
     --no-modify-profile \
     --yes \
-    && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc \
-    && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
-    && rm -rf /ede/.nix-defexpr/channels_root
+    # && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc \
+    # && echo ". /ede/.nix-profile/etc/profile.d/nix.sh" >> ~/.zshrc \
+    && rm -rf /ede/.nix-defexpr/channels_root \
+    && echo 'eval "$(direnv hook bash)"' >> ~/.bashrc \
+    && echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc \
+    && direnv allow /ede
 
-COPY --chown=ede:staff fs/ede /ede
-COPY --chown=root:root fs/etc /etc
-COPY --chown=ede:staff fs/flakes /flakes
+ENV USER=ede \
+    HOME=/ede \
+    DIRENV_LOG_FORMAT="" \
+    NIX_COLORS=1 \
+    NIX_IGNORE_SYMLINK_STORE=1 \
+    NIX_LOG_LEVEL=warn \
+    NIX_PROFILES="/nix/var/nix/profiles/default:/ede/.nix-profile" \
+    NIX_SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" \
+    NIXPKGS_ALLOW_UNFREE=1 \
+    NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
+    PATH="/ede/.nix-profile/bin:$PATH" \
+    XDG_DATA_DIRS="/usr/local/share:/usr/share:/ede/.nix-profile/share:/nix/var/nix/profiles/default/share" \
+    XDG_STATE_HOME=/state
+
+# COPY --chown=ede:staff fs/flakes /flakes
 # COPY --chown=root:root fs/usr /usr
+
+ENTRYPOINT [ "nix", "shell", "--impure", "--command" ]
 CMD [ "sleep", "infinity" ]
