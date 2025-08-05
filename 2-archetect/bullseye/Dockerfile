@@ -1,8 +1,15 @@
 ARG REGISTRY_PREFIX=ybor
 FROM ${REGISTRY_PREFIX}/rust:bullseye AS base
 
-RUN cargo install --force --git https://github.com/archetect/archetect.git archetect --root /usr/local
+ARG BUILDER_IMAGE_TAG
+ENV BUILDER_IMAGE_TAG=${BUILDER_IMAGE_TAG}
 
+RUN if [ -z "$BUILDER_IMAGE_TAG" ]; then \
+      cargo install --force --git https://github.com/archetect/archetect.git archetect --root /usr/local ; \
+    else \
+      cargo install --force --git https://github.com/archetect/archetect.git --tag "$BUILDER_IMAGE_TAG" archetect --root /usr/local ; \
+    fi
+    
 FROM ${REGISTRY_PREFIX}/debian:bullseye
 
 RUN apt-get update && \
