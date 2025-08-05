@@ -43,6 +43,7 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- \
 
 ENV USER=ede \
     HOME=/ede \
+    DIRENV_CONFIG="/ede/.config/direnv" \
     DIRENV_LOG_FORMAT="" \
     DIRENV_WARN_TIMEOUT=5m \
     NIX_COLORS=1 \
