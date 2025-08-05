@@ -20,8 +20,8 @@ RUN apt-get update && apt-get install -y \
     && mkdir -p -m 6755 /nix /ede /state \
     && chown ede:staff /nix /ede /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
-    && chmod 0440 /etc/sudoers.d/ede \
-    && mv /usr/bin/env /usr/bin/env_
+    && chmod 0440 /etc/sudoers.d/ede 
+# && mv /usr/bin/env /usr/bin/env_
 
 USER ede
 WORKDIR /ede
@@ -46,5 +46,5 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- \
 COPY --chown=ede:staff fs/ede /ede
 COPY --chown=root:root fs/etc /etc
 COPY --chown=ede:staff fs/flakes /flakes
-COPY --chown=root:root fs/usr /usr
+# COPY --chown=root:root fs/usr /usr
 CMD [ "sleep", "infinity" ]
