@@ -1,5 +1,5 @@
 ARG REGISTRY_PREFIX=ybor
-FROM ${REGISTRY_PREFIX}/rust:bullseye AS base
+FROM ${REGISTRY_PREFIX}/debian:bullseye AS base
 
 RUN cargo install --force --git https://github.com/archetect/archetect.git archetect --root /usr/local
 
