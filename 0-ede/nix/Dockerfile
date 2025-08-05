@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y \
     && groupadd -g 2375 docker \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" -g staff -aG docker ubuntu \
     && groupdel ubuntu \
-    && mkdir -p -m 6755 /nix /ede /state \
-    && chown ede:staff /nix /ede /state \
+    && mkdir -p -m 6755 /nix /ede /cache /config /data /state \
+    && chown ede:staff /nix /ede /cache /config /data /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
     && chmod 0440 /etc/sudoers.d/ede 
 # && mv /usr/bin/env /usr/bin/env_
@@ -44,6 +44,7 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- \
 ENV USER=ede \
     HOME=/ede \
     DIRENV_LOG_FORMAT="" \
+    DIRENV_WARN_TIMEOUT=5m \
     NIX_COLORS=1 \
     NIX_IGNORE_SYMLINK_STORE=1 \
     NIX_LOG_LEVEL=warn \
@@ -53,6 +54,9 @@ ENV USER=ede \
     NIXPKGS_URL=github:NixOS/nixpkgs/nixos-unstable \
     PATH="/ede/.nix-profile/bin:$PATH" \
     XDG_DATA_DIRS="/usr/local/share:/usr/share:/ede/.nix-profile/share:/nix/var/nix/profiles/default/share" \
+    XDG_CACHE_HOME=/cache \
+    XDG_CONFIG_HOME=/config \
+    XDG_DATA_HOME=/data \ 
     XDG_STATE_HOME=/state
 
 # COPY --chown=ede:staff fs/flakes /flakes
