@@ -28,8 +28,9 @@ let
   # Auto-detection based on project files (current dir and one level deep)
   detection =
     let
-      # Use evaluation context (pure mode compatible)
-      workingDir = toString ./.;
+      # Use PWD from native environment, fall back to shell.nix location
+      currentPwd = builtins.getEnv "PWD";
+      workingDir = if currentPwd != "" then currentPwd else toString ./.;
 
       # Safe file existence check that handles permission errors
       safePathExists = path:
@@ -62,9 +63,28 @@ let
         in
         if result.success then result.value else false;
 
-      # Check if file exists in current directory (pure mode compatible)
+      # Find which directory contains the file (current or subdirectory)
       findFileLocation = file:
-        if (safePathExists (./. + "/${file}")).value then "." else null;
+        if currentPwd != "" then
+          # Check current directory first
+          if safeFileExists (currentPwd + "/${file}") then "."
+          else
+            # Check subdirectories (1 level deep)
+            let
+              entries = if safeDirExists currentPwd then safeReadDir currentPwd else { };
+              subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
+              findSubdir = subdir:
+                let subdirPath = currentPwd + "/${subdir}";
+                in
+                if safeDirExists subdirPath && safeFileExists (subdirPath + "/${file}")
+                then subdir
+                else null;
+              found = builtins.filter (x: x != null) (map findSubdir subdirs);
+            in
+            if builtins.length found > 0 then builtins.head found else null
+        else
+          # Fall back to evaluation context
+          if (safePathExists (./. + "/${file}")).value then "." else null;
 
       # Check if file exists (wrapper around findFileLocation)
       fileExists = file: findFileLocation file != null;
