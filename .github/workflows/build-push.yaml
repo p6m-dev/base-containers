@@ -328,7 +328,7 @@ jobs:
             dockerfile: 2-archetect/bullseye/Dockerfile
             context: 2-archetect/bullseye
             version_tag: "2"
-            builder_image_tag_arg: "v2.0.0"
+            builder_image_tag_arg: "v2.0.7"
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
           - name: cloudflared
