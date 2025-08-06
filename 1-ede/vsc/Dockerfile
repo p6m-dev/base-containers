@@ -125,6 +125,8 @@ RUN EXTS="\
     firsttris.vscode-jest-runner \
     formulahendry.auto-close-tag \
     formulahendry.auto-rename-tag \
+    github.copilot \
+    github.copilot-chat \
     github.vscode-github-actions \
     golang.go \
     gruntfuggly.todo-tree \
@@ -132,18 +134,28 @@ RUN EXTS="\
     mikestead.dotenv \
     ms-azuretools.vscode-containers \
     ms-azuretools.vscode-docker \
+    ms-dotnettools.csdevkit \
+    ms-dotnettools.csharp \
     ms-dotnettools.vscode-dotnet-runtime \
     ms-playwright.playwright \
     ms-python.debugpy \
     ms-python.python \
+    ms-python.vscode-pylance \
+    ms-vscode-remote.remote-containers \
+    ms-vsliveshare.vsliveshare \
     nrwl.angular-console \
+    openai.chatgpt \
     redhat.java \
     redhat.vscode-xml \
     redhat.vscode-yaml \
+    rhai-script.vscode-rhai \
     rust-lang.rust-analyzer \
+    rvest.vscode-prettier-eslint \
     streetsidesoftware.code-spell-checker \
     stylelint.vscode-stylelint \
     tamasfe.even-better-toml \
+    visualstudioexptteam.intellicode-api-usage-examples \
+    visualstudioexptteam.vscodeintellicode \
     vscjava.vscode-gradle \
     vscjava.vscode-java-debug \
     vscjava.vscode-java-dependency \
@@ -151,10 +163,10 @@ RUN EXTS="\
     vscjava.vscode-java-test \
     vscjava.vscode-maven" && \
     for EXT in $EXTS; do \
-    echo "Installing extension: $EXT" && \
-    openvscode-server --install-extension "$EXT"; \
+        echo "Installing extension: $EXT" && \
+        (openvscode-server --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
     done && \
-    echo "All extensions installed successfully." && \
+    echo "All extensions installation attempts completed." && \
     # TODO: Install VSIX extensions when multi-stage is enabled
     # echo "Installing VSIX extensions..." && \
     # for VSIX in /vsix/*.vsix; do \
