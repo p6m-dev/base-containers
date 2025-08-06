@@ -15,8 +15,7 @@ FROM ${REGISTRY_PREFIX}/debian:bullseye
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         git \
-        jq \
-        zip && \
+        jq && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /usr/local/bin/archetect /usr/local/bin/archetect
