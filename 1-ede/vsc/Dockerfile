@@ -16,54 +16,54 @@ RUN ARCH=$(uname -m) && \
 ENV PATH="/vsc/bin:$PATH"
 
 RUN EXTS="\
-    dbaeumer.vscode-eslint \
-    esbenp.prettier-vscode \
-    firsttris.vscode-jest-runner \
-    nrwl.angular-console \
-    tamasfe.even-better-toml \
     anthropic.claude-code \
+    bradlc.vscode-tailwindcss \
+    dbaeumer.vscode-eslint \
     docker.docker \
-    github.copilot \
-    github.copilot-chat \
+    dsznajder.es7-react-js-snippets \
+    eamodio.gitlens \
+    esbenp.prettier-vscode \
+    fill-labs.dependi \
+    firsttris.vscode-jest-runner \
+    formulahendry.auto-close-tag \
+    formulahendry.auto-rename-tag \
+    #    github.copilot \
+    #    github.copilot-chat \
     github.vscode-github-actions \
+    golang.go \
+    gruntfuggly.todo-tree \
     hashicorp.terraform \
+    mikestead.dotenv \
     ms-azuretools.vscode-containers \
     ms-azuretools.vscode-docker \
+    #    ms-dotnettools.csdevkit \
+    #    ms-dotnettools.csharp \
     ms-dotnettools.vscode-dotnet-runtime \
-    ms-vscode-remote.remote-containers \
+    ms-playwright.playwright \
+    ms-python.debugpy \
+    ms-python.python \
+    #    ms-python.vscode-pylance \
+    #    ms-vscode-remote.remote-containers \
+    #    ms-vsliveshare.vsliveshare \
+    nrwl.angular-console \
+    #    openai.chatgpt \
     redhat.java \
     redhat.vscode-xml \
     redhat.vscode-yaml \
+    #    rhai-script.vscode-rhai \
     rust-lang.rust-analyzer \
-    rvest.vscode-prettier-eslint \
+    #    rvest.vscode-prettier-eslint \
     streetsidesoftware.code-spell-checker \
     stylelint.vscode-stylelint \
-    visualstudioexptteam.intellicode-api-usage-examples \
-    visualstudioexptteam.vscodeintellicode \
+    tamasfe.even-better-toml \
+    #    visualstudioexptteam.intellicode-api-usage-examples \
+    #    visualstudioexptteam.vscodeintellicode \
     vscjava.vscode-gradle \
     vscjava.vscode-java-debug \
     vscjava.vscode-java-dependency \
     vscjava.vscode-java-pack \
     vscjava.vscode-java-test \
-    vscjava.vscode-maven \
-    bradlc.vscode-tailwindcss \
-    dsznajder.es7-react-js-snippets \
-    eamodio.gitlens \
-    fill-labs.dependi \
-    formulahendry.auto-close-tag \
-    formulahendry.auto-rename-tag \
-    golang.go \
-    gruntfuggly.todo-tree \
-    mikestead.dotenv \
-    ms-dotnettools.csdevkit \
-    ms-dotnettools.csharp \
-    ms-playwright.playwright \
-    ms-python.debugpy \
-    ms-python.python \
-    ms-python.vscode-pylance \
-    ms-vsliveshare.vsliveshare \
-    openai.chatgpt \
-    rhai-script.vscode-rhai" && \
+    vscjava.vscode-maven" && \
     for EXT in $EXTS; do \
     echo "Installing extension: $EXT" && \
     openvscode-server --install-extension "$EXT"; \
