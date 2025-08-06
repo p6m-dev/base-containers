@@ -235,6 +235,11 @@ jobs:
             dockerfile: 1-golang/alpine3.17/Dockerfile
             context: 1-golang/alpine3.17
             version_arg: "" #unused
+          - name: ede
+            version_tag: vsc
+            dockerfile: 1-ede/vsc/Dockerfile
+            context: 1-ede/vsc
+            version_arg: "v1.102.3"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
