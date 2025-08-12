@@ -21,8 +21,6 @@ COPY extensions-github.sh /tmp/extensions-github.sh
 
 RUN /tmp/extensions-github.sh ${IDE} && \
     /tmp/extensions-openvsx.sh ${IDE} && \
-    rm -f /tmp/extensions-openvsx.sh /tmp/extensions-github.sh && \
-    echo "All extensions installed successfully." && \
-    sudo rm -rf /tmp/extensions-openvsx.sh /tmp/extensions-github.sh 
+    echo "All extensions installed successfully."
 
 CMD [ "${IDE}" ]
