@@ -17,4 +17,4 @@ echo "Installing EDE-VScode extension..."
 $VSCODE --install-extension /tmp/ede-vscode.vsix --force
 
 echo "EDE-VScode extension installed successfully."
-rm /tmp/ede-vscode.vsix
+sudo rm /tmp/ede-vscode.vsix

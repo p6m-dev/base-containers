@@ -54,5 +54,5 @@ EXTS="\
     done
 
 echo "All extensions installation attempts completed."
-rm -rf ~/.vscode-server/extensionsCache
-rm -rf ~/.vscode-server/logs
+sudo rm -rf ~/.vscode-server/extensionsCache
+sudo rm -rf ~/.vscode-server/logs
