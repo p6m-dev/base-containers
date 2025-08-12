@@ -19,9 +19,10 @@ ENV IDE="code-server"
 COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
 
-RUN /usr/local/bin/extensions-github.sh ${IDE} && \
-    /usr/local/bin/extensions-openvsx.sh ${IDE} && \
+RUN /tmp/extensions-github.sh ${IDE} && \
+    /tmp/extensions-openvsx.sh ${IDE} && \
     rm -f /tmp/extensions-openvsx.sh /tmp/extensions-github.sh && \
-    echo "All extensions installed successfully."
+    echo "All extensions installed successfully." && \
+    rm -rf /tmp/extensions-openvsx.sh /tmp/extensions-github.sh 
 
 CMD [ "${IDE}" ]
