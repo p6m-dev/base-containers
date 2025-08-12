@@ -148,12 +148,12 @@ jobs:
           - name: ede
             version_tag: openvscode-server
             dockerfile: 1-ede/vsc/Dockerfile.openvscode-server
-            context: 1-ede/vsc
+            context: 1-ede/vscode
             version_arg: "1.102.3"
           - name: ede
             version_tag: code-server
             dockerfile: 1-ede/vsc/Dockerfile.code-server
-            context: 1-ede/vsc
+            context: 1-ede/vscode
             version_arg: "4.102.3"
           - name: amazoncorretto
             version_tag: 17-alpine3.17
