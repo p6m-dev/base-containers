@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -ex
 
 if [ -z "$1" ]; then
@@ -49,10 +49,10 @@ EXTS="\
     vscjava.vscode-java-test \
     vscjava.vscode-maven" && \
     for EXT in $EXTS; do \
-    echo "Installing extension: $EXT" && \
-    ($VSCODE --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
-    done && \
-    echo "All extensions installation attempts completed." && \
-    rm -rf ~/.vscode-server/extensionsCache && \
-    rm -rf ~/.vscode-server/logs && \
-    rm -rf /tmp/*
+        echo "Installing extension: $EXT" && \
+        ($VSCODE --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
+    done
+
+echo "All extensions installation attempts completed."
+rm -rf ~/.vscode-server/extensionsCache
+rm -rf ~/.vscode-server/logs
