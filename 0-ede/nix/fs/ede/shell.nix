@@ -13,7 +13,7 @@ let
   packageSets = {
     nodejs = with pkgs; [ nodejs_22 yarn nodePackages.npm nodePackages.typescript nodePackages.pnpm ];
     python = with pkgs; [ python3 python3Packages.pip python3Packages.virtualenv ];
-    rust = with pkgs; [ rustc cargo rustfmt clippy ];
+    rust = with pkgs; [ rustc cargo rustfmt clippy rust-analyzer ];
     go = with pkgs; [ go gopls ];
     java = with pkgs; [ openjdk17 maven gradle ];
     docker = with pkgs; [ docker docker-compose ];
