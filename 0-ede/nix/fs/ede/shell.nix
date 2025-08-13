@@ -8,16 +8,7 @@ let
 
   # Helper function to get packages from environment variable (disabled in pure mode)
   envPackages = [ ];
-
-  # Predefined package sets for common development scenarios
-  packageSets = {
-    nodejs = with pkgs; [ nodejs_22 yarn nodePackages.npm nodePackages.typescript nodePackages.pnpm ];
-    python = with pkgs; [ python3 python3Packages.pip python3Packages.virtualenv ];
-    rust = with pkgs; [ rustup rust-analyzer ];
-    go = with pkgs; [ go gopls ];
-    java = with pkgs; [ openjdk17 maven gradle ];
-    docker = with pkgs; [ docker docker-compose ];
-  };
+  packageSets = import ./package-sets.nix { inherit pkgs; };
 
   # Helper function to get package set by name
   getPackageSet = name:
