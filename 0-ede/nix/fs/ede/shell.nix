@@ -13,7 +13,7 @@ let
   packageSets = {
     nodejs = with pkgs; [ nodejs_22 yarn nodePackages.npm nodePackages.typescript nodePackages.pnpm ];
     python = with pkgs; [ python3 python3Packages.pip python3Packages.virtualenv ];
-    rust = with pkgs; [ rustc cargo rustfmt clippy rust-analyzer ];
+    rust = with pkgs; [ rustc cargo rustfmt clippy rust-analyzer rustPlatform.rustLibSrc ];
     go = with pkgs; [ go gopls ];
     java = with pkgs; [ openjdk17 maven gradle ];
     docker = with pkgs; [ docker docker-compose ];
@@ -66,10 +66,10 @@ let
       # Find which directory contains the file (current or subdirectory)
       findFileLocation = file:
         if currentPwd != "" then
-          # Check current directory first
+        # Check current directory first
           if safeFileExists (currentPwd + "/${file}") then "."
           else
-            # Check subdirectories (1 level deep)
+          # Check subdirectories (1 level deep)
             let
               entries = if safeDirExists currentPwd then safeReadDir currentPwd else { };
               subdirs = builtins.attrNames (pkgs.lib.filterAttrs (name: type: type == "directory") entries);
@@ -83,7 +83,7 @@ let
             in
             if builtins.length found > 0 then builtins.head found else null
         else
-          # Fall back to evaluation context
+        # Fall back to evaluation context
           if (safePathExists (./. + "/${file}")).value then "." else null;
 
       # Check if file exists (wrapper around findFileLocation)
@@ -162,7 +162,7 @@ let
     in
     {
       devShells = forAllSystems (system: {
-        default = 
+        default =
           let packageSet = import ./packages.nix { inherit system; };
           in packageSet.pkgs.mkShell {
             buildInputs = packageSet.packages;
@@ -170,7 +170,7 @@ let
           };
       });
       packages = forAllSystems (system: {
-        default = 
+        default =
           let packageSet = import ./packages.nix { inherit system; };
           in packageSet.pkgs.buildEnv {
             name = "ede-packages";
@@ -187,12 +187,12 @@ in
 # Export both shell and flake outputs
 {
   inherit shell;
-  
+
   devShells = forAllSystems (system: {
     default = (import ./shell.nix { inherit system; }).shell;
   });
   packages = forAllSystems (system: {
-    default = 
+    default =
       let ps = import ./packages.nix { inherit system; };
       in ps.pkgs.buildEnv {
         name = "ede-packages";
