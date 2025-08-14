@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y \
     && groupadd -g 2375 docker \
     && usermod -l ede -d /ede -m -u 1000 -c "ede" -g staff -aG docker ubuntu \
     && groupdel ubuntu \
-    && mkdir -p -m 6755 /nix /ede /cache /config /data /state \
-    && chown ede:staff /nix /ede /cache /config /data /state \
+    && mkdir -p -m 6755 /nix /ede /build /cache /config /data /state \
+    && chown ede:staff /nix /ede /build /cache /config /data /state \
     && echo "ede ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ede \
     && chmod 0440 /etc/sudoers.d/ede 
 # && mv /usr/bin/env /usr/bin/env_
@@ -47,7 +47,6 @@ ENV USER=ede \
     DIRENV_LOG_FORMAT="" \
     DIRENV_WARN_TIMEOUT=5m \
     NIX_COLORS=1 \
-    NIX_IGNORE_SYMLINK_STORE=1 \
     NIX_LOG_LEVEL=warn \
     NIX_PROFILES="/nix/var/nix/profiles/default:/ede/.nix-profile" \
     NIX_SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" \
