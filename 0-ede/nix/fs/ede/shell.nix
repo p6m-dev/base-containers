@@ -84,14 +84,14 @@ let
       getPath = file: findFileLocation file;
 
       detections = [
-        { file = "package.json"; packages = packageSets.nodejs; name = "Node.js"; }
-        { file = "requirements.txt"; packages = packageSets.python; name = "Python"; }
-        { file = "pyproject.toml"; packages = packageSets.python; name = "Python"; }
-        { file = "Cargo.toml"; packages = packageSets.rust; name = "Rust"; }
-        { file = "go.mod"; packages = packageSets.go; name = "Go"; }
-        { file = "pom.xml"; packages = packageSets.java; name = "Java"; }
-        { file = "build.gradle"; packages = packageSets.java; name = "Java"; }
-        { file = "Dockerfile"; packages = packageSets.docker; name = "Docker"; }
+        { file = "package.json"; packages = packageSets.nodejs or {}; name = "Node.js"; }
+        { file = "requirements.txt"; packages = packageSets.python or {}; name = "Python"; }
+        { file = "pyproject.toml"; packages = packageSets.python or {}; name = "Python"; }
+        { file = "Cargo.toml"; packages = packageSets.rust or {}; name = "Rust"; }
+        { file = "go.mod"; packages = packageSets.go or {}; name = "Go"; }
+        { file = "pom.xml"; packages = packageSets.java or {}; name = "Java"; }
+        { file = "build.gradle"; packages = packageSets.java or {}; name = "Java"; }
+        { file = "Dockerfile"; packages = packageSets.docker or {}; name = "Docker"; }
       ];
 
       results = map
@@ -101,7 +101,8 @@ let
             exists = fileExists d.file;
           in
           if path != null then {
-            packages = d.packages;
+            packages = d.packages.packages or [];
+            env = d.packages.env or {};
             message = "${d.name} project detected at ${path}";
           } else null
         )
@@ -111,6 +112,7 @@ let
     in
     {
       packages = pkgs.lib.concatLists (map (r: r.packages) validResults);
+      env = pkgs.lib.foldl' (acc: r: acc // r.env) {} validResults;
       messages = map (r: r.message) validResults;
     };
 
@@ -119,15 +121,17 @@ let
   extraPkgsCount = builtins.length extraPkgs;
   allPkgs = pkgs.lib.unique (homePkgs ++ extraPkgs);
 
+  # Environment variables from detected package sets
+  envVars = detection.env;
+
   # Shell derivation
   shell = pkgs.mkShell {
     buildInputs = allPkgs;
 
     shellHook = ''
-      export OPENSSL_DIR="${pkgs.openssl.dev}"
-      export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
-      export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
+      export OPENSSL_DIR="${pkgs.openssl.dev}" OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib" OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
       export LD_LIBRARY_PATH="${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH"
+      export ${pkgs.lib.concatStringsSep " " (pkgs.lib.mapAttrsToList (name: value: "${name}=\"${toString value}\"") envVars)}
 
       echo "🚀 Nix development environment loaded"
       echo "📦 Base packages: ${toString (builtins.length homePkgs)}"
@@ -177,7 +181,7 @@ in
 
 # Export both shell and flake outputs
 {
-  inherit shell;
+  inherit shell envVars;
 
   devShells = forAllSystems (system: {
     default = (import ./shell.nix { inherit system; }).shell;
@@ -189,5 +193,8 @@ in
         name = "ede-packages";
         paths = ps.packages;
       };
+  });
+  env = forAllSystems (system: {
+    default = (import ./shell.nix { inherit system; }).envVars;
   });
 }
