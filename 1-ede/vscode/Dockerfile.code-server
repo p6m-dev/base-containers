@@ -10,18 +10,19 @@ RUN ARCH=$(uname -m) && \
     esac && \
     URL="https://github.com/coder/code-server/releases/download/v${VERSION}/code-server-${VERSION}-linux-${ARCH_SUFFIX}.tar.gz" && \
     echo "Downloading: $URL" && \
-    sudo mkdir -p /vsc /vsc/extensions && \
-    sudo chown ede:staff /vsc /vsc/extensions && \
-    curl -fsSL "$URL" | sudo tar -xz --strip-components=1 -C /vsc
+    sudo mkdir -p /vsc && \
+    curl -fsSL "$URL" | sudo tar -xz --strip-components=1 -C /vsc && \
+    sudo chown -R ede:staff /vsc
 
 ENV PATH="/vsc/bin:$PATH" \
-    IDE="code-server" \
-    CODE_SERVER_CONFIG="/vsc/config"
+    IDE="code-server"
 
 COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
 
-RUN /tmp/extensions-github.sh ${IDE} && \
+RUN mkdir -p /vsc/extensions && \
+    touch /vsc/extensions/extensions.json && \
+    /tmp/extensions-github.sh ${IDE} && \
     /tmp/extensions-openvsx.sh ${IDE} && \
     echo "All extensions installed successfully."
 

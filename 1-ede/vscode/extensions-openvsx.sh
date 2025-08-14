@@ -50,7 +50,7 @@ EXTS="\
     vscjava.vscode-maven" && \
     for EXT in $EXTS; do \
         echo "Installing extension: $EXT" && \
-        ($VSCODE --user-data-dir=/vsc --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
+        ($VSCODE --extensions-dir=/vsc/extensions --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
     done
 
 echo "All extensions installation attempts completed."
