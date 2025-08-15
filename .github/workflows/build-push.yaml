@@ -146,6 +146,11 @@ jobs:
       matrix:
         include:
           - name: ede
+            version_tag: coder
+            dockerfile: 1-ede/coder/Dockerfile
+            context: 1-ede/coder
+            version_arg: "2.22.1"
+          - name: ede
             version_tag: openvscode-server
             dockerfile: 1-ede/vscode/Dockerfile.openvscode-server
             context: 1-ede/vscode
