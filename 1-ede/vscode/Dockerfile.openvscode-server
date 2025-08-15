@@ -26,4 +26,4 @@ RUN mkdir -p /vsc/extensions && \
     /tmp/extensions-openvsx.sh ${IDE} && \
     echo "All extensions installed successfully."
 
-CMD [ "${IDE}" ]
+CMD [ "openvscode-server" ]
