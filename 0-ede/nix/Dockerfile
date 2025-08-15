@@ -1,4 +1,4 @@
-FROM public.ecr.aws/ubuntu/ubuntu:noble AS base
+FROM public.ecr.aws/ubuntu/ubuntu:noble
 
 RUN apt-get update && apt-get install -y \
     acl \
@@ -64,13 +64,13 @@ ENV USER=ede \
 
 ENTRYPOINT [ "nix", "shell", "--impure", "--command" ]
 
-### TESTS ###
-### Only activated with --target on docker build command ###
-FROM base AS test-detections
-COPY --chown=ede:staff tests/test-detections/fs/ede /ede
-WORKDIR /ede/orgs/some-org
-RUN direnv exec . rustc --version
+# ### TESTS ###
+# ### Only activated with --target on docker build command ###
+# FROM base AS test-detections
+# COPY --chown=ede:staff tests/test-detections/fs/ede /ede
+# WORKDIR /ede/orgs/some-org
+# RUN direnv exec . rustc --version
 
-### FINAL IMAGE ###
-FROM base
-CMD [ "sleep", "infinity" ]
+# ### FINAL IMAGE ###
+# FROM base
+# CMD [ "sleep", "infinity" ]
