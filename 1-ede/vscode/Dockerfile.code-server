@@ -26,4 +26,5 @@ RUN mkdir -p /vsc/extensions && \
     /tmp/extensions-openvsx.sh ${IDE} && \
     echo "All extensions installed successfully."
 
-CMD [ "direnv", "exec", ".", "code-server", "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]
+ENTRYPOINT [ "direnv", "exec", ".", "code-server" ]
+CMD [ "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]

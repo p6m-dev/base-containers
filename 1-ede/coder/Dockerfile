@@ -17,4 +17,5 @@ RUN ARCH=$(uname -m) && \
 
 FROM $REGISTRY_PREFIX/ede:nix
 COPY --from=builder /coder/coder /usr/bin/coder
-CMD [ "coder" ]
+ENTRYPOINT [ "/usr/bin/coder" ]
+CMD [ "agent" ]
