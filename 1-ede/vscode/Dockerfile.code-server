@@ -26,5 +26,7 @@ RUN mkdir -p /vsc/extensions && \
     /tmp/extensions-openvsx.sh ${IDE} && \
     echo "All extensions installed successfully."
 
+RUN sed -i 's/APP_NAME="code-server"/APP_NAME="Visual Studio Code"/' /vsc/lib/vscode/bin/remote-cli/code-server
+
 ENTRYPOINT [ "direnv", "exec", ".", "code-server" ]
 CMD [ "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]
