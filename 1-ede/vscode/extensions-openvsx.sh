@@ -35,6 +35,7 @@ EXTS="\
     ms-vsliveshare.vsliveshare \
     nrwl.angular-console \
     openai.chatgpt \
+    Postman.postman-for-vscode \
     redhat.java \
     redhat.vscode-xml \
     redhat.vscode-yaml \
