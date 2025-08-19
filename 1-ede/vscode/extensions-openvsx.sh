@@ -13,6 +13,7 @@ EXTS="\
     bradlc.vscode-tailwindcss \
     dbaeumer.vscode-eslint \
     docker.docker \
+    EchoAPI.echoapi-for-vscode \
     esbenp.prettier-vscode \
     firsttris.vscode-jest-runner \
     formulahendry.auto-close-tag \
@@ -35,7 +36,6 @@ EXTS="\
     ms-vsliveshare.vsliveshare \
     nrwl.angular-console \
     openai.chatgpt \
-    Postman.postman-for-vscode \
     redhat.java \
     redhat.vscode-xml \
     redhat.vscode-yaml \
