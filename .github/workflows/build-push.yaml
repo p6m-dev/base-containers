@@ -165,6 +165,7 @@ jobs:
             dockerfile: 1-ede/vscode/Dockerfile.vscode
             context: 1-ede/vscode
             version_arg: "latest"
+            variants: "linux/amd64"
           - name: amazoncorretto
             version_tag: 17-alpine3.17
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
@@ -302,7 +303,7 @@ jobs:
           build-args: |
             REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
             VERSION=${{ matrix.version_arg }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.variants || 'linux/amd64,linux/arm64' }}
           pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
