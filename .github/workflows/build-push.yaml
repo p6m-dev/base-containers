@@ -160,6 +160,11 @@ jobs:
             dockerfile: 1-ede/vscode/Dockerfile.code-server
             context: 1-ede/vscode
             version_arg: "4.102.3"
+          - name: ede
+            version_tag: vscode
+            dockerfile: 1-ede/vscode/Dockerfile.vscode
+            context: 1-ede/vscode
+            version_arg: "latest"
           - name: amazoncorretto
             version_tag: 17-alpine3.17
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
