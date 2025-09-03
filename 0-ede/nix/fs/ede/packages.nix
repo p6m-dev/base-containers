@@ -23,10 +23,11 @@ let
     # coder
 
     # Utilities
+    busybox
     fzf
     grpc-tools
+    grpcurl
     jq
-    net-tools
     yq-go
     vim
 
