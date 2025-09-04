@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
     zsh \
     jq \
+    moreutils \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean \
     && groupadd -g 2375 docker \
