@@ -3,6 +3,7 @@ FROM $REGISTRY_PREFIX/ede:nix
 
 # ARM64: https://code.visualstudio.com/sha/download?build=stable&os=linux-arm64
 # AMD64: https://code.visualstudio.com/sha/download?build=stable&os=linux-x64
+# INSIDER AMD64: https://code.visualstudio.com/sha/download?build=insider&os=linux-x64
 
 RUN ARCH=$(uname -m) && \
     case "$ARCH" in \
@@ -10,7 +11,7 @@ RUN ARCH=$(uname -m) && \
     aarch64) ARCH_SUFFIX="arm64" ;; \
     *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
     esac && \
-    URL="https://code.visualstudio.com/sha/download?build=stable&os=linux-$ARCH_SUFFIX" && \
+    URL="https://code.visualstudio.com/sha/download?build=insider&os=linux-$ARCH_SUFFIX" && \
     echo "Downloading: $URL" && \
     sudo mkdir -p /vsc && \
     curl -fsSL "$URL" | sudo tar -xz --strip-components=1 -C /vsc && \
