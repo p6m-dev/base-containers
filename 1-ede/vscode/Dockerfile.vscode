@@ -1,9 +1,8 @@
 ARG REGISTRY_PREFIX=ybor
 FROM $REGISTRY_PREFIX/ede:nix
 
-# ARM64: https://code.visualstudio.com/sha/download?build=stable&os=linux-arm64
-# AMD64: https://code.visualstudio.com/sha/download?build=stable&os=linux-x64
-# INSIDER AMD64: https://code.visualstudio.com/sha/download?build=insider&os=linux-x64
+# ARM64: https://code.visualstudio.com/sha/download?build=insider&os=linux-arm64
+# AMD64: https://code.visualstudio.com/sha/download?build=insider&os=linux-x64
 
 RUN ARCH=$(uname -m) && \
     case "$ARCH" in \
@@ -33,9 +32,9 @@ RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y \
     && sudo rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/vsc/bin:$PATH" \
-    IDE="code"
+    IDE="code-insiders"
 
-RUN code --version
+RUN code-insiders --version
 
 COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
@@ -46,5 +45,5 @@ RUN mkdir -p /vsc/extensions && \
     /tmp/extensions-openvsx.sh ${IDE} && \
     echo "All extensions installed successfully."
 
-ENTRYPOINT [ "direnv", "exec", ".", "code", "serve-web" ]
+ENTRYPOINT [ "direnv", "exec", ".", "code-insiders", "serve-web" ]
 # CMD [ "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]
