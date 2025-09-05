@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-VSCODE="$1"
+IDE="$1"
 
 EXTS="\
     dbaeumer.vscode-eslint \
@@ -21,8 +21,8 @@ EXTS="\
     rust-lang.rust-analyzer \
     tamasfe.even-better-toml" && \
     for EXT in $EXTS; do \
-        echo "Installing extension: $EXT" && \
-        ($VSCODE --extensions-dir=/vsc/extensions --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
+        echo "Installing ${IDE} extension: $EXT" && \
+        ($IDE --extensions-dir=/${IDE}/extensions --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
     done
 
 echo "All extensions installation attempts completed."
