@@ -2,22 +2,22 @@ ARG REGISTRY_PREFIX=ybor
 FROM $REGISTRY_PREFIX/ede:nix
 
 # Install VS Code runtime dependencies
-RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y \
-    libglib2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libdbus-1-3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcairo2 \
-    libgtk-3-0 \
-    libgbm1 \
-    libasound2t64 \
-    xvfb \
-    && sudo rm -rf /var/lib/apt/lists/*
+# RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y \
+#     libglib2.0-0 \
+#     libnspr4 \
+#     libnss3 \
+#     libdbus-1-3 \
+#     libatk1.0-0 \
+#     libatk-bridge2.0-0 \
+#     libcairo2 \
+#     libgtk-3-0 \
+#     libgbm1 \
+#     libasound2t64 \
+#     xvfb \
+#     && sudo rm -rf /var/lib/apt/lists/*
 
-# ARM64: https://code.visualstudio.com/sha/download?build=stable&os=linux-arm64
-# AMD64: https://code.visualstudio.com/sha/download?build=stable&os=linux-x64
+# ARM64: https://update.code.visualstudio.com/latest/server-linux-arm64/stable
+# AMD64: https://update.code.visualstudio.com/latest/server-linux-x64/stable
 
 RUN ARCH=$(uname -m) && \
     case "$ARCH" in \
@@ -25,33 +25,26 @@ RUN ARCH=$(uname -m) && \
     aarch64) ARCH_SUFFIX="arm64" ;; \
     *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
     esac && \
-    URL="https://code.visualstudio.com/sha/download?build=stable&os=linux-$ARCH_SUFFIX" && \
+    URL="https://update.code.visualstudio.com/latest/server-linux-$ARCH_SUFFIX/stable" && \
     echo "Downloading: $URL" && \
     sudo mkdir -p /vsc && \
     curl -fsSL "$URL" | sudo tar -xz --strip-components=1 -C /vsc && \
-    sudo chown -R ede:staff /vsc && \
-    sudo chown root:root /vsc/chrome-sandbox && \
-    sudo chmod +4755 /vsc/chrome-sandbox
+    sudo chown -R ede:staff /vsc
 
 ENV PATH="/vsc/bin:$PATH" \
     ELECTRON_RUN_AS_NODE=1 \
-    IDE="code"
+    IDE="code-server"
 
-RUN code --version
-RUN /vsc/code --version
+RUN code-server --version
 
-COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
+COPY extensions-marketplace.sh /tmp/extensions-marketplace.sh
 
 RUN mkdir -p /vsc/extensions && \
     touch /vsc/extensions/extensions.json && \
     /tmp/extensions-github.sh ${IDE} && \
-    /tmp/extensions-openvsx.sh ${IDE} && \
+    /tmp/extensions-marketplace.sh ${IDE} && \
     echo "All extensions installed successfully."
 
-RUN jq '.extensionEnabledApiProposals["ybor-studio.ede-vscode"] = ["tunnels", "portsAttributes", "resolvers", "workspaceTrust"]' \
-    /vsc/resources/app/product.json | sponge /vsc/resources/app/product.json \
-    && echo "All extensions granted additional VSCode API permissions."
-
-ENTRYPOINT [ "direnv", "exec", ".", "code", "serve-web" ]
+# ENTRYPOINT [ "direnv", "exec", ".", "code", "serve-web" ]
 # CMD [ "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]

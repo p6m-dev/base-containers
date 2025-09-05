@@ -19,9 +19,7 @@ EXTS="\
     redhat.vscode-xml \
     redhat.vscode-yaml \
     rust-lang.rust-analyzer \
-    tamasfe.even-better-toml \
-    visualstudioexptteam.intellicode-api-usage-examples \
-    visualstudioexptteam.vscodeintellicode" && \
+    tamasfe.even-better-toml" && \
     for EXT in $EXTS; do \
         echo "Installing extension: $EXT" && \
         ($VSCODE --extensions-dir=/vsc/extensions --install-extension "$EXT" --force || echo "Failed to install $EXT, continuing..."); \
