@@ -34,9 +34,11 @@ RUN ARCH=$(uname -m) && \
     sudo chmod +4755 /vsc/chrome-sandbox
 
 ENV PATH="/vsc/bin:$PATH" \
+    ELECTRON_RUN_AS_NODE=1 \
     IDE="code"
 
 RUN code --version
+RUN /vsc/code --version
 
 COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
