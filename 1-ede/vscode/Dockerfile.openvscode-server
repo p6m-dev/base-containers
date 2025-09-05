@@ -17,13 +17,13 @@ RUN ARCH=$(uname -m) && \
 ENV PATH="/vsc/bin:$PATH"
 ENV IDE="openvscode-server"
 
-COPY extensions-openvsx.sh /tmp/extensions-openvsx.sh
+COPY extensions-marketplace.sh /tmp/extensions-marketplace.sh
 COPY extensions-github.sh /tmp/extensions-github.sh
 
 RUN mkdir -p /vsc/extensions && \
     touch /vsc/extensions/extensions.json && \
     /tmp/extensions-github.sh ${IDE} && \
-    /tmp/extensions-openvsx.sh ${IDE} && \
+    /tmp/extensions-marketplace.sh ${IDE} && \
     echo "All extensions installed successfully."
 
 CMD [ "openvscode-server" ]
