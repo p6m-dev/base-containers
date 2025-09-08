@@ -414,6 +414,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # Alpine base image
             variants: "linux/amd64,linux/arm64"
+          - name: keycloak
+            version_tag: "26"
+            dockerfile: 2-keycloak/26/Dockerfile
+            context: 2-keycloak/26
+            version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # Alpine base image
+            variants: "linux/amd64,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
