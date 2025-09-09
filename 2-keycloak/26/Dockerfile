@@ -8,3 +8,4 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 USER 1001
+ENV DISABLE_WELCOME_MESSAGE=true
