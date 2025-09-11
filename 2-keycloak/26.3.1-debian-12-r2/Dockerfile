@@ -3,8 +3,6 @@
 FROM bitnami/keycloak:26.3.1-debian-12-r2
 
 USER root
-RUN apt-get update &&
-  apt-get upgrade -y &&
-  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 USER 1001
 ENV DISABLE_WELCOME_MESSAGE=true
