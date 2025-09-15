@@ -6,6 +6,9 @@ FROM $REGISTRY_PREFIX/ede:nix
 # AMD64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-x64-web.tar.gz
 # ARM64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-arm64-web.tar.gz
 
+# Increment this to invalidate the docker cache
+ENV CACHE_BUST=1
+
 RUN ARCH=$(uname -m) && \
     case "$ARCH" in \
     x86_64) ARCH_SUFFIX="x64" ;; \
