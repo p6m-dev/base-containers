@@ -3,8 +3,8 @@ FROM $REGISTRY_PREFIX/ede:nix
 
 # code-server
 # TODO: look up sha from github releases
-# AMD64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/6f17636121051a53c88d3e605c491d22af2ba755/vscode-server-linux-x64-web.tar.gz
-# ARM64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/6f17636121051a53c88d3e605c491d22af2ba755/vscode-server-linux-arm64-web.tar.gz
+# AMD64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-x64-web.tar.gz
+# ARM64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-arm64-web.tar.gz
 
 RUN ARCH=$(uname -m) && \
     case "$ARCH" in \
@@ -13,7 +13,7 @@ RUN ARCH=$(uname -m) && \
     *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
     esac && \
     sudo mkdir -p /code-server && \
-    URL="https://vscode.download.prss.microsoft.com/dbazure/download/stable/6f17636121051a53c88d3e605c491d22af2ba755/vscode-server-linux-$ARCH_SUFFIX-web.tar.gz" && \
+    URL="https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-$ARCH_SUFFIX-web.tar.gz" && \
     echo "Downloading: $URL" && \
     curl -fsSL "$URL" | sudo tar -xz --strip-components=1 -C /code-server && \
     sudo chown -R ede:staff /code-server
