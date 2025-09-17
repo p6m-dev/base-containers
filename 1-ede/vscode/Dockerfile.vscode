@@ -34,14 +34,14 @@ ENV PATH="/code-server/bin:$PATH" \
 
 RUN code-server --version
 
-COPY extensions-github.sh /tmp/extensions-github.sh
-COPY extensions-marketplace.sh /tmp/extensions-marketplace.sh
+# COPY extensions-github.sh /tmp/extensions-github.sh
+# COPY extensions-marketplace.sh /tmp/extensions-marketplace.sh
 
-RUN mkdir -p /${IDE}/extensions && \
-    touch /${IDE}/extensions/extensions.json && \
-    /tmp/extensions-github.sh ${IDE} && \
-    /tmp/extensions-marketplace.sh ${IDE} && \
-    echo "All extensions installed successfully."
+# RUN mkdir -p /${IDE}/extensions && \
+#     touch /${IDE}/extensions/extensions.json && \
+#     /tmp/extensions-github.sh ${IDE} && \
+#     /tmp/extensions-marketplace.sh ${IDE} && \
+#     echo "All extensions installed successfully."
 
 # ENTRYPOINT [ "direnv", "exec", ".", "code", "serve-web" ]
 # CMD [ "--auth", "none", "--port", "2999", "--extensions-dir", "/vsc/extensions", "--app-name", "VS Code (Web)" ]
