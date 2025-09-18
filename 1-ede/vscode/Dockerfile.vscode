@@ -39,8 +39,8 @@ COPY extensions-marketplace.sh /tmp/extensions-marketplace.sh
 
 RUN mkdir -p /${IDE}/extensions && \
     touch /${IDE}/extensions/extensions.json && \
-    /tmp/extensions-github.sh ${IDE} && \
     /tmp/extensions-marketplace.sh ${IDE} && \
+    /tmp/extensions-github.sh ${IDE} && \
     echo "All extensions installed successfully."
 
 # ENTRYPOINT [ "direnv", "exec", ".", "code", "serve-web" ]

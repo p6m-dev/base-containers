@@ -14,6 +14,11 @@ echo "EDE-VScode Latest release: $EDE_VSCODE_RELEASE"
 curl -L -o /tmp/ede-vscode.vsix "https://github.com/ybor-studio/ede-vscode/releases/download/$EDE_VSCODE_RELEASE/ede-vscode-$EDE_VSCODE_RELEASE.vsix"
 
 echo "Installing EDE-VScode extension on ${IDE}..."
-$IDE --extensions-dir=/${IDE}/extensions --install-extension /tmp/ede-vscode.vsix --force
+$IDE --start-server \
+     --server-data-dir /code-server \
+     --builtin-extensions-dir /code-server/extensions \
+     --enable-proposed-api ybor-studio.ede-vscode \
+     --install-builtin-extension /tmp/ede-vscode.vsix \
+     --force
 
 echo "EDE-VScode extension installed successfully."
