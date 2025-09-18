@@ -15,6 +15,7 @@ curl -L -o /tmp/ede-vscode.vsix "https://github.com/ybor-studio/ede-vscode/relea
 
 echo "Installing EDE-VScode extension on ${IDE}..."
 $IDE --start-server \
+     --accept-server-license-terms \
      --server-data-dir /code-server \
      --builtin-extensions-dir /code-server/extensions \
      --enable-proposed-api ybor-studio.ede-vscode \
