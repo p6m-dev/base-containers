@@ -7,7 +7,7 @@ FROM $REGISTRY_PREFIX/ede:nix
 # ARM64: https://vscode.download.prss.microsoft.com/dbazure/download/stable/f220831ea2d946c0dcb0f3eaa480eb435a2c1260/vscode-server-linux-arm64-web.tar.gz
 
 # Increment this to invalidate the docker cache
-ENV CACHE_BUST=5
+ENV CACHE_BUST=6
 
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
     sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && \
