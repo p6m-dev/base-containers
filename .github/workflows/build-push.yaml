@@ -87,6 +87,7 @@ jobs:
             type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=sha,prefix=${{ matrix.version_tag }}-
             type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -259,6 +260,7 @@ jobs:
             type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=sha,prefix=${{ matrix.version_tag }}-
             type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -435,6 +437,7 @@ jobs:
             type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=sha,prefix=${{ matrix.version_tag }}-
             type=sha,prefix=${{ matrix.version_tag }}-,format=long
+            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
