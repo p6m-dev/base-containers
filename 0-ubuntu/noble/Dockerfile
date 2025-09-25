@@ -8,7 +8,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
+    ca-certificates debsums gpg libssl-dev tzdata wget curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Calculate the sum of all installed packages, which will override Dockercache if something changed
@@ -29,7 +29,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y \
-    ca-certificates debsums gpg libssl-dev tzdata wget \
+    ca-certificates debsums gpg libssl-dev tzdata wget curl \
     && rm -rf /var/lib/apt/lists/*
 
 ENV BASE_IMAGE_MAINTAINER="ybor"

@@ -148,22 +148,11 @@ jobs:
             dockerfile: 1-ede/coder/Dockerfile
             context: 1-ede/coder
             version_arg: "2.22.1"
-          # - name: ede
-          #   version_tag: openvscode-server
-          #   dockerfile: 1-ede/vscode/Dockerfile.openvscode-server
-          #   context: 1-ede/vscode
-          #   version_arg: "1.102.3"
-          # - name: ede
-          #   version_tag: code-server
-          #   dockerfile: 1-ede/vscode/Dockerfile.code-server
-          #   context: 1-ede/vscode
-          #   version_arg: "4.102.3"
-          - name: ede
-            version_tag: vscode
-            dockerfile: 1-ede/vscode/Dockerfile.vscode
-            context: 1-ede/vscode
-            version_arg: "latest"
-            variants: "linux/amd64"
+          - name: vscode
+            version_tag: latest
+            dockerfile: 1-vscode/Dockerfile
+            context: 1-vscode
+            version_arg: "f220831ea2d946c0dcb0f3eaa480eb435a2c1260" # TODO: Lookup from relases
           - name: amazoncorretto
             version_tag: 17-alpine3.17
             dockerfile: 1-amazoncorretto/alpine3.17/Dockerfile
