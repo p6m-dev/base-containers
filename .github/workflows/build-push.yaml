@@ -56,6 +56,16 @@ jobs:
             dockerfile: 0-debian/bookworm-slim/Dockerfile
             context: 0-debian/bookworm-slim
             variants: "linux/amd64,linux/arm64"
+          - name: debian
+            version_tag: trixie
+            dockerfile: 0-debian/trixie/Dockerfile
+            context: 0-debian/trixie
+            variants: "linux/amd64,linux/arm64"
+          - name: debian
+            version_tag: trixie-slim
+            dockerfile: 0-debian/trixie-slim/Dockerfile
+            context: 0-debian/trixie-slim
+            variants: "linux/amd64,linux/arm64"
           - name: ubuntu
             version_tag: jammy
             dockerfile: 0-ubuntu/jammy/Dockerfile
