@@ -375,6 +375,14 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "latest"
             variants: "linux/amd64,linux/arm64"
+          - name: docker
+            version_tag: "dind"
+            dockerfile: 2-docker/dind/Dockerfile
+            context: 2-docker/dind
+            version_arg: "" # unused
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # Alpine base image
+            variants: "linux/amd64,linux/arm64"
           # - name: tippecanoe
           #   version_tag: "latest"
           #   dockerfile: 2-tippecanoe/bullseye/Dockerfile
