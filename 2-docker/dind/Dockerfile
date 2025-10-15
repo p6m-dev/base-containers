@@ -11,7 +11,8 @@ RUN apk update && \
     curl \
     wget \
     bash \
-    sudo
+    sudo \
+    dnsmasq
 
 COPY ./init.sh /init.sh
 ENTRYPOINT [ "/init.sh" ]

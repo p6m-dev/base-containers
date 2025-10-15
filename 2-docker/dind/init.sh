@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+echo "[init] Starting dnsmasq..."
+# Start dnsmasq to provide DNS for the docker containers
+dnsmasq --no-daemon --log-facility=- &
+dnsmasq_pid=$!
+trap "echo '[init] Stopping dnsmasq...'; kill $dnsmasq_pid" EXIT
+echo "[init] dnsmasq started with PID $dnsmasq_pid"
+
 echo "[init] Starting Docker with network bootstrap..."
 
 # --- 1. Enable IPv4 forwarding so NAT works
