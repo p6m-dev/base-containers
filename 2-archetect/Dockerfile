@@ -2,6 +2,7 @@ ARG REGISTRY_PREFIX=ybor
 FROM ${REGISTRY_PREFIX}/debian:trixie-slim
 
 # DEVNOTE: the following packages are intentionally included to support various Archetect features and or archetect-based workflows.
+ENV TZ=UTC
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   git curl wget ca-certificates yq jq unzip gpg libssl-dev tzdata && \
