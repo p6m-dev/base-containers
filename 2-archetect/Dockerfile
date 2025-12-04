@@ -5,7 +5,7 @@ FROM ${REGISTRY_PREFIX}/debian:trixie-slim
 ENV TZ=UTC
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-  git curl wget ca-certificates yq jq zip gpg libssl-dev tzdata && \
+  git curl wget ca-certificates yq jq zip unzip gpg libssl-dev tzdata && \
   rm -rf /var/lib/apt/lists/*
 
 # ARM64: https://github.com/archetect/archetect/releases/download/v2.0.7/archetect-v2.0.7-linux-arm64.tar.gz
