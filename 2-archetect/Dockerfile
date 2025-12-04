@@ -11,7 +11,7 @@ RUN apt-get update && \
 # ARM64: https://github.com/archetect/archetect/releases/download/v2.0.7/archetect-v2.0.7-linux-arm64.tar.gz
 # AMD64: https://github.com/archetect/archetect/releases/download/v2.0.7/archetect-v2.0.7-linux-x86_64.tar.gz
 
-ARG BUILDER_IMAGE_TAG=v2.0.7
+ARG BUILDER_IMAGE_TAG=v2.1.0
 ENV ARCHETECT_VERSION=${BUILDER_IMAGE_TAG}
 RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
