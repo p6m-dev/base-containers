@@ -11,7 +11,7 @@ ARG TARGETARCH
 RUN pip install --no-cache --upgrade pip && pip install --no-cache azure-cli
 
 COPY --from=kubectl /bin/kubectl /usr/local/bin/kubectl
-RUN apk add jq yq
+RUN apk update && apk add --no-cache jq yq
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
