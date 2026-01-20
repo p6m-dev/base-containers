@@ -9,7 +9,7 @@ RUN pip install --upgrade pip && pip install azure-cli
 # User-defined build args
 ARG VERSION=v1.34.3
 
-RUN wget -O /usr/bin/kubectl https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && chmod +x /usr/bin/kubectl
+RUN wget -O /usr/bin/kubectl https://dl.k8s.io/release/${VERSION}/bin/linux/${TARGETARCH}/kubectl && chmod +x /usr/bin/kubectl
 RUN apk add jq yq
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
