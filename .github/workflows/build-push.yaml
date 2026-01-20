@@ -249,10 +249,10 @@ jobs:
             dockerfile: 1-aws-cli/al2/Dockerfile
             context: 1-aws-cli/al2
             version_arg: "latest"
-          - name: azure-cli
-            version_tag: kubectl-1.34.0
-            dockerfile: 1-azure-cli/kubectl/Dockerfile
-            context: 1-azure-cli/kubectl
+          - name: azurebox
+            version_tag: latest
+            dockerfile: 1-azurebox/alpine/Dockerfile
+            context: 1-azurebox/alpine
             version_arg: "v1.34.0"
           - name: golang
             version_tag: 1.21
