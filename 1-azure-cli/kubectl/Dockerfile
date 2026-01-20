@@ -4,7 +4,7 @@ FROM public.ecr.aws/docker/library/python:alpine3.18 AS final
 ARG TARGETARCH
 
 # Install Azure CLI
-RUN pip install --upgrade pip && pip install azure-cli
+RUN pip install --no-cache --upgrade pip && pip install --no-cache azure-cli
 
 # User-defined build args
 ARG VERSION=v1.34.3
