@@ -247,8 +247,13 @@ jobs:
           - name: aws-cli
             version_tag: latest
             dockerfile: 1-aws-cli/al2/Dockerfile
-            conetxt: 1-aws-cli/al2
+            context: 1-aws-cli/al2
             version_arg: "latest"
+          - name: azurebox
+            version_tag: latest
+            dockerfile: 1-azurebox/alpine/Dockerfile
+            context: 1-azurebox/alpine
+            version_arg: "v1.34.0"
           - name: golang
             version_tag: 1.21
             dockerfile: 1-golang/alpine3.17/Dockerfile
