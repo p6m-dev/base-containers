@@ -72,12 +72,22 @@ ARG SCCACHE_VERSION=0.14.0
 ARG TARGETARCH
 # While there is no linux-gnu variant available, the linux-musl version installs and runs successfully.
 RUN case "$TARGETARCH" in \
-        arm64) SCCACHE_ARCH="aarch64-unknown-linux-musl" ;; \
-        amd64) SCCACHE_ARCH="x86_64-unknown-linux-musl" ;; \
-        *) "unsupported architecture (sccache): $TARGETARCH (probably available online, just not included in case)" ;; \
+        arm64) \
+            sccacheArch="aarch64-unknown-linux-musl"; \
+            sccacheSha='62a6c942c47c93333bc0174704800cef7edfa0416d08e1356c1d3e39f0b462f2'; \
+            ;; \
+        amd64) \
+            sccacheArch="x86_64-unknown-linux-musl"; \
+            sccacheSha='8424b38cda4ecce616a1557d81328f3d7c96503a171eab79942fad618b42af44'; \
+            ;; \
+        *) echo >&2 "unsupported architecture (sccache): $TARGETARCH"; exit 1 ;; \
     esac && \
-    curl -fsSL https://github.com/mozilla/sccache/releases/download/v${SCCACHE_VERSION}/sccache-v${SCCACHE_VERSION}-${SCCACHE_ARCH}.tar.gz \
-    | tar -xz --strip-components=1 -C /usr/local/bin \
-    sccache-v${SCCACHE_VERSION}-${SCCACHE_ARCH}/sccache && sccache --help
+    tarball="sccache-v${SCCACHE_VERSION}-${sccacheArch}.tar.gz" && \
+    curl -fsSL "https://github.com/mozilla/sccache/releases/download/v${SCCACHE_VERSION}/${tarball}" -o "${tarball}" && \
+    echo "${sccacheSha} *${tarball}" | sha256sum -c - && \
+    tar -xz --file="${tarball}" --strip-components=1 -C /usr/local/bin \
+        "sccache-v${SCCACHE_VERSION}-${sccacheArch}/sccache" && \
+    rm "${tarball}" && \
+    sccache --help
 ENV RUSTC_WRAPPER=sccache
 # Configuration of sccache is left to the consumer to allow the usage of any backend through supported ENV/ARG.
