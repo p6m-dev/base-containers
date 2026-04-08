@@ -244,6 +244,11 @@ jobs:
             dockerfile: 1-rust/bullseye/Dockerfile
             context: 1-rust/bullseye
             version_arg: stable
+          - name: rust
+            version_tag: trixie
+            dockerfile: 1-rust/trixie/Dockerfile
+            context: 1-rust/trixie
+            version_arg: stable
           - name: aws-cli
             version_tag: latest
             dockerfile: 1-aws-cli/al2/Dockerfile
