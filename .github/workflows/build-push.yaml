@@ -244,6 +244,11 @@ jobs:
             dockerfile: 1-rust/bullseye/Dockerfile
             context: 1-rust/bullseye
             version_arg: stable
+          - name: rust
+            version_tag: trixie
+            dockerfile: 1-rust/trixie/Dockerfile
+            context: 1-rust/trixie
+            version_arg: stable
           - name: aws-cli
             version_tag: latest
             dockerfile: 1-aws-cli/al2/Dockerfile
@@ -334,14 +339,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: cargo-chef
-            version_tag: "0.1-trixie"
-            dockerfile: 2-cargo-chef/Dockerfile
-            context: 2-cargo-chef
-            version_arg: "^0.1" # version of cargo-chef
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "trixie" # latest version of rust
-            variants: "linux/amd64,linux/arm64"
           - name: archetect
             dockerfile: 2-archetect/Dockerfile
             context: 2-archetect
