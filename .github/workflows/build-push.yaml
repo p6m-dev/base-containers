@@ -434,6 +434,17 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # Alpine base image
             variants: "linux/amd64,linux/arm64"
+          # Official Keycloak distribution on the ybor debian trixie-slim base (YP6M-2898).
+          # NOTE: the floating "26" tag intentionally stays on the legacy bitnami-derived
+          # image above until production migrates (filesystem layout differs).
+          - name: keycloak
+            version_tag: "26.6.4"
+            dockerfile: 2-keycloak/26.6.4/Dockerfile
+            context: 2-keycloak/26.6.4
+            version_arg: "26.6.4" # keycloak dist version; DIST_SHA256 in the Dockerfile must match
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
