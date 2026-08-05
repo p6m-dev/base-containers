@@ -118,8 +118,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: p6m.jfrog.io
-          username: ${{ secrets.ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.ARTIFACTORY_IDENTITY_TOKEN }}
+          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
       - name: Build and push
         id: build-push
         uses: docker/build-push-action@v6
@@ -301,8 +301,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: p6m.jfrog.io
-          username: ${{ secrets.ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.ARTIFACTORY_IDENTITY_TOKEN }}
+          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
       - name: Build and push
         id: build-push
         uses: docker/build-push-action@v6
@@ -344,6 +344,26 @@ jobs:
             context: 2-archetect
             version_tag: "2"
             builder_image_tag_arg: "v2.1.0" # TODO UNPIN THIS
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
+          # Archetect v3, server-shaped (YP6M-3288): `archetect server` (gRPC :8080) by
+          # default; override the command for job-style renders (same CLI + tool set as
+          # v2). Floating "3" and pinned entries, keycloak-style; keep both version_arg
+          # values in sync when bumping.
+          - name: archetect
+            version_tag: "3"
+            dockerfile: 2-archetect/v3/Dockerfile
+            context: 2-archetect/v3
+            version_arg: "v3.4.3" # archetect release tag
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
+          - name: archetect
+            version_tag: "3.4.3"
+            dockerfile: 2-archetect/v3/Dockerfile
+            context: 2-archetect/v3
+            version_arg: "v3.4.3" # archetect release tag
+            builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
           - name: cloudflared
@@ -482,8 +502,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: p6m.jfrog.io
-          username: ${{ secrets.ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.ARTIFACTORY_IDENTITY_TOKEN }}
+          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
       - name: Build and push
         id: build-push
         uses: docker/build-push-action@v6
