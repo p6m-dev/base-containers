@@ -6,7 +6,8 @@ ARG REGISTRY_PREFIX=ybor
 #
 # Build options are BAKED into the image here. Consumers must run
 # `start --optimized`, and runtime env vars for build options (KC_DB,
-# KC_HEALTH_ENABLED, KC_METRICS_ENABLED, KC_FEATURES_DISABLED) are ignored.
+# KC_HEALTH_ENABLED, KC_METRICS_ENABLED, KC_FEATURES_DISABLED,
+# KC_EVENT_METRICS_USER_ENABLED) are ignored.
 # Downstream images that add provider JARs MUST re-run `kc.sh build` with
 # these exact same flags (see 2-keycloak/README.md).
 # ---------------------------------------------------------------------------
@@ -32,10 +33,19 @@ RUN wget -q -O /tmp/keycloak.tar.gz \
     mv /opt/keycloak-${VERSION} /opt/keycloak && \
     rm /tmp/keycloak.tar.gz
 
+# --event-metrics-user-enabled is a BUILD-TIME option (EventOptions.java:
+# .buildTime(true)), so it cannot be turned on with KC_EVENT_METRICS_USER_ENABLED
+# under `start --optimized` — it has to be baked here. It replaces the Aerogear
+# keycloak-metrics-spi that the Bitnami lineage shipped (YP6M-3411). The
+# `user-event-metrics` feature itself needs no --features flag: it is Type.DEFAULT
+# (supported, enabled by default) as of Keycloak 26.2.
+# Tag set and event filter stay runtime options (KC_EVENT_METRICS_USER_TAGS,
+# default `realm`; KC_EVENT_METRICS_USER_EVENTS).
 RUN /opt/keycloak/bin/kc.sh build \
       --db=postgres \
       --health-enabled=true \
       --metrics-enabled=true \
+      --event-metrics-user-enabled=true \
       --features-disabled=impersonation
 
 # ---------------------------------------------------------------------------

@@ -12,14 +12,36 @@ Two image lineages live here during the Bitnami migration (YP6M-2897):
 - Distribution tarball is downloaded from the GitHub release and **sha256-verified**
   (`DIST_SHA256` build arg must be updated in lockstep with `VERSION`).
 - Runs an **optimized build** (`kc.sh build`) at image-build time with:
-  `--db=postgres --health-enabled=true --metrics-enabled=true --features-disabled=impersonation`
+  `--db=postgres --health-enabled=true --metrics-enabled=true --event-metrics-user-enabled=true --features-disabled=impersonation`
 - Runs as non-root UID `1001` (group `0`), `ENTRYPOINT kc.sh`, `CMD start --optimized`.
 - Ports: `8080` (http), `8443` (https), `9000` (management — health/metrics).
 
 Because the server is pre-augmented, **runtime env vars for build options are
-ignored** (`KC_DB`, `KC_HEALTH_ENABLED`, `KC_METRICS_ENABLED`, `KC_FEATURES_*`).
+ignored** (`KC_DB`, `KC_HEALTH_ENABLED`, `KC_METRICS_ENABLED`, `KC_FEATURES_*`,
+`KC_EVENT_METRICS_USER_ENABLED`).
 Runtime options (`KC_DB_URL`, `KC_DB_USERNAME`, `KC_DB_PASSWORD`, `KC_HOSTNAME`,
-`KC_HTTP_ENABLED`, `KC_PROXY_HEADERS`, `KC_CACHE_STACK`, `KC_LOG*`, ...) work as usual.
+`KC_HTTP_ENABLED`, `KC_PROXY_HEADERS`, `KC_CACHE_STACK`, `KC_LOG*`,
+`KC_EVENT_METRICS_USER_TAGS`, `KC_EVENT_METRICS_USER_EVENTS`, ...) work as usual.
+
+### User event metrics
+
+`--event-metrics-user-enabled=true` is baked in (YP6M-3411), replacing the Aerogear
+`keycloak-metrics-spi` (`metrics-listener`) that the Bitnami lineage shipped and this
+image does not. It emits a `keycloak_user_events_total` counter on the same
+`:9000/metrics` endpoint.
+
+Two things that are easy to get wrong:
+
+- It needs **no** `--features=user-event-metrics`. That feature is `Type.DEFAULT`
+  (supported, on by default) as of Keycloak 26.2 — it was only preview in 26.1.
+- Its listener, `micrometer-user-event-metrics`, declares `isGlobal() == true`, so it
+  fires for every realm and must **not** be added to a realm's `eventsListeners`.
+  Naming it there is not required and naming a listener the server lacks makes
+  `PUT /admin/realms/{realm}/events/config` fail with `400 Unknown event listener`.
+
+Counters reset when an instance restarts, so aggregate across the cluster. The
+`clientId` and `error` tags are capped at 10,000 unique values by default; the tag set
+defaults to `realm` only and is widened at runtime via `KC_EVENT_METRICS_USER_TAGS`.
 
 ## Baking in provider JARs (downstream images)
 
@@ -34,8 +56,13 @@ RUN /opt/keycloak/bin/kc.sh build \
       --db=postgres \
       --health-enabled=true \
       --metrics-enabled=true \
+      --event-metrics-user-enabled=true \
       --features-disabled=impersonation
 ```
+
+`kc.sh build` persists exactly the options it is given — anything omitted reverts to
+its default. A downstream re-augmentation that drops a flag therefore silently turns
+that option **off**, which is why the list has to be copied whole rather than trimmed.
 
 Tag convention: `<keycloak-version>-provider-<provider-version>` (e.g. `26.6.4-provider-1.0.5`).
 
