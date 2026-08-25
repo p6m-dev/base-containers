@@ -12,19 +12,45 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # VERSION is the workflow's general-purpose version build-arg (matrix.version_arg).
-ARG VERSION=v3.4.3
+# 3.5.0 is the floor for Studio's generation surface: DescribeArchetype takes the answers
+# collected so far, which is what lets a client render an archetype's prompts as a wizard
+# (describe → the page that still has prompts → collect → describe again). Below it, a
+# describe can only ever return the whole prompt surface at once.
+ARG VERSION=v3.5.0
 ENV ARCHETECT_VERSION=${VERSION}
+
+# The exact bytes that VERSION means, per architecture. Pinned HERE rather than fetched
+# alongside the tarball: a checksum published next to the artifact it describes is vouched for
+# by nobody, so whoever can replace one can replace both, and verifying against it proves only
+# that the download was not corrupted in transit. Pinned, the version tag becomes a CONTENT
+# pin — the binary in this image is the one reviewed when this line was written, or the build
+# fails. That is the difference between "we asked for 3.5.0" and "we got 3.5.0".
+#
+# Bumping VERSION means bumping these together. The release publishes them:
+#   gh release download <tag> -R archetect/archetect -p '*linux*.sha256' -O -
+# (verified against the downloaded artifacts on 2026-08-19, not merely copied from that file).
+ARG SHA256_X86_64=2032a83e8a1aeab863dcbd49c2780305fef43d73c4902e9453f2e1f71690978d
+ARG SHA256_ARM64=f095027e590703d43d3925d5fce6558f5deb9ec3a59dba12ca3a1b54abc3c924
+
 RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
   case "${dpkgArch##*-}" in \
-  amd64) arch='x86_64' ;; \
-  armhf | arm64) arch='arm64' ;; \
+  amd64) arch='x86_64'; sha256="${SHA256_X86_64}" ;; \
+  armhf | arm64) arch='arm64'; sha256="${SHA256_ARM64}" ;; \
   *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
   esac; \
-  url="https://github.com/archetect/archetect/releases/download/${ARCHETECT_VERSION}/archetect-${ARCHETECT_VERSION}-linux-${arch}.tar.gz"; \
+  # Fail CLOSED on an unpinned version: overriding VERSION without its checksums would
+  # otherwise install whatever that tag happens to serve, which is the hole this closes.
+  if [ -z "${sha256}" ]; then \
+  echo >&2 "no pinned SHA256 for ${ARCHETECT_VERSION} on ${arch} — pass SHA256_X86_64/SHA256_ARM64 for that release"; \
+  exit 1; \
+  fi; \
+  tarball="archetect-${ARCHETECT_VERSION}-linux-${arch}.tar.gz"; \
+  url="https://github.com/archetect/archetect/releases/download/${ARCHETECT_VERSION}/${tarball}"; \
   wget -q "$url"; \
-  tar -xzf "archetect-${ARCHETECT_VERSION}-linux-${arch}.tar.gz" --strip-components=1 -C /usr/local/bin; \
-  rm "archetect-${ARCHETECT_VERSION}-linux-${arch}.tar.gz"; \
+  echo "${sha256}  ${tarball}" | sha256sum -c -; \
+  tar -xzf "${tarball}" --strip-components=1 -C /usr/local/bin; \
+  rm "${tarball}"; \
   chmod +x /usr/local/bin/archetect; \
   archetect --version
 
