@@ -36,7 +36,9 @@ RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
   case "${dpkgArch##*-}" in \
   amd64) arch='x86_64'; sha256="${SHA256_X86_64}" ;; \
-  armhf | arm64) arch='arm64'; sha256="${SHA256_ARM64}" ;; \
+  arm64) arch='arm64'; sha256="${SHA256_ARM64}" ;; \
+  # armhf deliberately NOT mapped to arm64: a 32-bit userland cannot run the arm64 binary,
+  # and the published platforms are amd64/arm64 only — an armhf build fails here by name.
   *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
   esac; \
   # Fail CLOSED on an unpinned version: overriding VERSION without its checksums would
