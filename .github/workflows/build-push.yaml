@@ -346,6 +346,26 @@ jobs:
             builder_image_tag_arg: "v2.1.0" # TODO UNPIN THIS
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
+          # Archetect v3, server-shaped (YP6M-3288): `archetect server` (gRPC :8080) by
+          # default; override the command for job-style renders (same CLI + tool set as
+          # v2). Floating "3" and pinned entries, keycloak-style; keep both version_arg
+          # values in sync when bumping.
+          - name: archetect
+            version_tag: "3"
+            dockerfile: 2-archetect/v3/Dockerfile
+            context: 2-archetect/v3
+            version_arg: "v3.4.3" # archetect release tag
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
+          - name: archetect
+            version_tag: "3.4.3"
+            dockerfile: 2-archetect/v3/Dockerfile
+            context: 2-archetect/v3
+            version_arg: "v3.4.3" # archetect release tag
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
           - name: cloudflared
             version_tag: "2025"
             dockerfile: 2-cloudflared/bullseye/Dockerfile
