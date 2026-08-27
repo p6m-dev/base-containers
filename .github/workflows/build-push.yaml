@@ -468,6 +468,19 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
+          # MySQL build variant of the official-distribution image (YP6M-3593).
+          # Identical to 26.6.4 except `kc.sh build --db=mysql`. KC_DB is baked at build
+          # time under `start --optimized`, so the vendor cannot be switched at runtime and
+          # a separate tag is required. prd stays on MySQL (YP6M-3053); keycloak-dev stays
+          # on the postgres 26.6.4 tag above.
+          - name: keycloak
+            version_tag: "26.6.4-mysql"
+            dockerfile: 2-keycloak/26.6.4-mysql/Dockerfile
+            context: 2-keycloak/26.6.4-mysql
+            version_arg: "26.6.4" # keycloak dist version; DIST_SHA256 in the Dockerfile must match
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
