@@ -16,7 +16,10 @@ RUN apt-get update && \
 # collected so far, which is what lets a client render an archetype's prompts as a wizard
 # (describe → the page that still has prompts → collect → describe again). Below it, a
 # describe can only ever return the whole prompt surface at once.
-ARG VERSION=v3.5.0
+# 3.6.0 adds eager serving (YP6M-3652): `archetect server` warms its catalog before binding
+# the port and re-checks every source on `updates.refresh_interval`, so request paths never
+# pause on the network — the chart's invalidate+pull entrypoint hack retires with it.
+ARG VERSION=v3.6.0
 ENV ARCHETECT_VERSION=${VERSION}
 
 # The exact bytes that VERSION means, per architecture. Pinned HERE rather than fetched
@@ -28,9 +31,9 @@ ENV ARCHETECT_VERSION=${VERSION}
 #
 # Bumping VERSION means bumping these together. The release publishes them:
 #   gh release download <tag> -R archetect/archetect -p '*linux*.sha256' -O -
-# (verified against the downloaded artifacts on 2026-08-19, not merely copied from that file).
-ARG SHA256_X86_64=2032a83e8a1aeab863dcbd49c2780305fef43d73c4902e9453f2e1f71690978d
-ARG SHA256_ARM64=f095027e590703d43d3925d5fce6558f5deb9ec3a59dba12ca3a1b54abc3c924
+# (verified against the downloaded artifacts on 2026-09-02, not merely copied from that file).
+ARG SHA256_X86_64=0b9b56aeaae70a0fc1a74d8d73bb5a69f40f9d47217fc4fd0a30f631b6fe03e6
+ARG SHA256_ARM64=4b746711a4fe05ad3add5e9245ef96881432df667fcb7ca8bdf94fdbed791740
 
 RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
