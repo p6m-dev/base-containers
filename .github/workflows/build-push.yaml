@@ -357,15 +357,15 @@ jobs:
             # Must match the Dockerfile's default AND its per-arch SHA256 pins — the
             # version is content-pinned, so a version_arg the pins don't describe fails
             # the build (deliberately) rather than shipping unverified bytes.
-            version_arg: "v3.5.0" # archetect release tag
+            version_arg: "v3.6.0" # archetect release tag
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
           - name: archetect
-            version_tag: "3.5.0"
+            version_tag: "3.6.0"
             dockerfile: 2-archetect/v3/Dockerfile
             context: 2-archetect/v3
-            version_arg: "v3.5.0" # archetect release tag
+            version_arg: "v3.6.0" # archetect release tag
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
