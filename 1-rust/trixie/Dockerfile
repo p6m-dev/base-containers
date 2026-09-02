@@ -64,8 +64,11 @@ RUN set -eux; \
 
 RUN apt-get update && \
     apt-get install -y \
-    gcc g++ make curl pkg-config \
+    gcc g++ make curl pkg-config mold \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure rust to use `mold` for linking
+ENV RUSTFLAGS='-C link-arg=-fuse-ld=mold'
 
 # Install sccache
 ARG SCCACHE_VERSION=0.14.0
