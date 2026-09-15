@@ -101,6 +101,11 @@ jobs:
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
+          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
+          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
+          image: tonistiigi/binfmt:qemu-v9.2.2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
@@ -284,6 +289,11 @@ jobs:
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
+          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
+          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
+          image: tonistiigi/binfmt:qemu-v9.2.2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
@@ -501,6 +511,11 @@ jobs:
             type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
+          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
+          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
+          image: tonistiigi/binfmt:qemu-v9.2.2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
