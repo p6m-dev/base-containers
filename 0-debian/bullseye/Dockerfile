@@ -4,6 +4,13 @@ ARG CACHE_BUST
 ENV CACHE_BUST=${CACHE_BUST}
 ENV TZ=UTC
 
+# bullseye left the mirrors when its LTS ended (2026-08-31): deb.debian.org now 404s its
+# security pool, which broke every build of this image (2026-09-15). EOL releases live on
+# archive.debian.org, whose Release files no longer refresh — hence Check-Valid-Until off.
+RUN echo "deb http://archive.debian.org/debian bullseye main" > /etc/apt/sources.list && \
+    echo "deb http://archive.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99-archive-eol
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
@@ -25,6 +32,13 @@ COPY --from=upgraded /var/lib/dpkg/sha256sum /var/lib/dpkg/sha256sum
 RUN echo "PKGSUM is $(cat /var/lib/dpkg/sha256sum)"
 
 # Apply the same updates as the upgraded stage
+# bullseye left the mirrors when its LTS ended (2026-08-31): deb.debian.org now 404s its
+# security pool, which broke every build of this image (2026-09-15). EOL releases live on
+# archive.debian.org, whose Release files no longer refresh — hence Check-Valid-Until off.
+RUN echo "deb http://archive.debian.org/debian bullseye main" > /etc/apt/sources.list && \
+    echo "deb http://archive.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99-archive-eol
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive \
