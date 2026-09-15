@@ -19,7 +19,7 @@ RUN apt-get update && \
 # 3.6.0 adds eager serving (YP6M-3652): `archetect server` warms its catalog before binding
 # the port and re-checks every source on `updates.refresh_interval`, so request paths never
 # pause on the network — the chart's invalidate+pull entrypoint hack retires with it.
-ARG VERSION=v3.6.0
+ARG VERSION=v3.6.1
 ENV ARCHETECT_VERSION=${VERSION}
 
 # The exact bytes that VERSION means, per architecture. Pinned HERE rather than fetched
@@ -31,9 +31,9 @@ ENV ARCHETECT_VERSION=${VERSION}
 #
 # Bumping VERSION means bumping these together. The release publishes them:
 #   gh release download <tag> -R archetect/archetect -p '*linux*.sha256' -O -
-# (verified against the downloaded artifacts on 2026-09-02, not merely copied from that file).
-ARG SHA256_X86_64=0b9b56aeaae70a0fc1a74d8d73bb5a69f40f9d47217fc4fd0a30f631b6fe03e6
-ARG SHA256_ARM64=4b746711a4fe05ad3add5e9245ef96881432df667fcb7ca8bdf94fdbed791740
+# (verified against the downloaded artifacts on 2026-09-15, not merely copied from that file).
+ARG SHA256_X86_64=fdaf8cf524c8f4e20453607b5e5ea780966b7d144145896dc383067266349cfb
+ARG SHA256_ARM64=ba68d8ea436fd883f121cd276a818061dbcd244f65e3d431cdce374426d7076b
 
 RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
