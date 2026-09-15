@@ -102,10 +102,12 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
+          # Pinned to v8.1.5, and the VERSION IS LOAD-BEARING in both directions (2026-09-15):
+          # `latest` is years-stale qemu whose glibc postinst SEGFAULTS on emulated arm64
+          # (nginx-bullseye: libc-bin exit 139), and v9.2.2 regresses tar under emulation
+          # (ede-nix: "Cannot open: Invalid argument" extracting the aarch64 Nix tarball —
+          # the qemu-v9 openat2 class). v8.1.5 fixes the former and predates the latter.
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
@@ -290,10 +292,12 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
+          # Pinned to v8.1.5, and the VERSION IS LOAD-BEARING in both directions (2026-09-15):
+          # `latest` is years-stale qemu whose glibc postinst SEGFAULTS on emulated arm64
+          # (nginx-bullseye: libc-bin exit 139), and v9.2.2 regresses tar under emulation
+          # (ede-nix: "Cannot open: Invalid argument" extracting the aarch64 Nix tarball —
+          # the qemu-v9 openat2 class). v8.1.5 fixes the former and predates the latter.
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
@@ -512,10 +516,12 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
+          # Pinned to v8.1.5, and the VERSION IS LOAD-BEARING in both directions (2026-09-15):
+          # `latest` is years-stale qemu whose glibc postinst SEGFAULTS on emulated arm64
+          # (nginx-bullseye: libc-bin exit 139), and v9.2.2 regresses tar under emulation
+          # (ede-nix: "Cannot open: Invalid argument" extracting the aarch64 Nix tarball —
+          # the qemu-v9 openat2 class). v8.1.5 fixes the former and predates the latter.
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
