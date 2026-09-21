@@ -451,25 +451,11 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # Alpine base image
             variants: "linux/amd64,linux/arm64"
-          - name: keycloak
-            version_tag: "26"
-            dockerfile: 2-keycloak/26.3.1-debian-12-r2/Dockerfile
-            context: 2-keycloak/26.3.1-debian-12-r2
-            version_arg: "" # unused
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "" # Alpine base image
-            variants: "linux/amd64,linux/arm64"
-          - name: keycloak
-            version_tag: "26.3.1-debian-12-r2"
-            dockerfile: 2-keycloak/26.3.1-debian-12-r2/Dockerfile
-            context: 2-keycloak/26.3.1-debian-12-r2
-            version_arg: "" # unused
-            builder_image_tag_arg: "" # unused
-            image_tag_arg: "" # Alpine base image
-            variants: "linux/amd64,linux/arm64"
           # Official Keycloak distribution on the ybor debian trixie-slim base (YP6M-2898).
-          # NOTE: the floating "26" tag intentionally stays on the legacy bitnami-derived
-          # image above until production migrates (filesystem layout differs).
+          # There is deliberately no floating "26" tag (YP6M-3599): `kc.sh build --db=`
+          # bakes one database vendor in, so "26" could only ever mean one of the two
+          # variants below, and a floating major tag is exactly the mutable-tag drift
+          # this repo is moving away from. Consumers pin a version or a dated tag.
           - name: keycloak
             version_tag: "26.6.4"
             dockerfile: 2-keycloak/26.6.4/Dockerfile
