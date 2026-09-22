@@ -1,13 +1,16 @@
 # keycloak
 
-Two image lineages live here during the Bitnami migration (YP6M-2897); the official-distribution
-lineage ships in two database variants:
+Every image here is built from the **official Keycloak distribution** on the ybor hardened
+`debian:trixie-slim` base, in two database variants. The Bitnami-derived lineage and the
+floating `26` tag were retired in YP6M-3599 (migration epic YP6M-2897).
 
 | Directory | Lineage | Layout | Consumers |
 |---|---|---|---|
 | `26.6.4/` | **Official Keycloak distribution** on the ybor hardened `debian:trixie-slim` base | `/opt/keycloak` | New deployments (p6m-keycloak chart >= 0.2.0) |
 | `26.6.4-mysql/` | **Official Keycloak distribution**, MySQL build variant | `/opt/keycloak` | Deployments on a MySQL backend — prd `auth.ashleyfurniture.com` (YP6M-3053) |
-| `26.3.1-debian-12-r2/` | Legacy Bitnami-derived (patch layer over our last mirrored Bitnami image) | `/opt/bitnami/keycloak` | Production until migrated — do not remove; the floating `26` tag stays pointed here |
+
+There is no floating major (`26`) tag: `kc.sh build --db=` bakes one vendor in, so a single
+major tag cannot cover both variants — pin a version tag or a dated one.
 
 ## Official-distribution image (`26.6.4/`, `26.6.4-mysql/`)
 
