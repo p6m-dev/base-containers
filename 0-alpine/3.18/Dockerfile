@@ -1,4 +1,4 @@
-FROM p6m.jfrog.io/p6m-dev-docker-remote/library/alpine:3.18 as upgraded
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/alpine:3.18 AS upgraded
 
 ENV TZ=UTC
 
