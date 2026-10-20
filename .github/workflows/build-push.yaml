@@ -435,6 +435,18 @@ jobs:
           #   builder_image_tag_arg: "1.21" # Go build image
           #   image_tag_arg: "3.17" # Alpine base image
           #   variants: "linux/amd64,linux/arm64"
+          # kubectl with bash/awk for Helm hook Jobs (kyverno's cleanup hooks first). No floating
+          # tag: consumers pin the dated tag, because the weekly rebuild moves "1.36.4" itself.
+          - name: kubectl
+            version_tag: "1.36.4"
+            dockerfile: 2-kubectl/trixie-slim/Dockerfile
+            context: 2-kubectl/trixie-slim
+            # Must match the Dockerfile's default AND its per-arch SHA256 pins — the version is
+            # content-pinned, so a version_arg the pins don't describe fails the build.
+            version_arg: "v1.36.4"
+            builder_image_tag_arg: "" # unused
+            image_tag_arg: "" # unused
+            variants: "linux/amd64,linux/arm64"
           - name: github-runner
             version_tag: "latest"
             dockerfile: 2-github-runner/latest/Dockerfile
