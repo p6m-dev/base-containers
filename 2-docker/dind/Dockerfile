@@ -1,4 +1,4 @@
-FROM docker:dind
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/docker:dind
 
 RUN apk update && \
     apk upgrade --no-cache && \

@@ -2,7 +2,7 @@ ARG VERSION=v1.34.3
 
 FROM registry.k8s.io/kubectl:${VERSION} AS kubectl
 
-FROM public.ecr.aws/docker/library/python:alpine3.18 AS final
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/python:alpine3.18 AS final
 
 # Pull in buildkit builtin args for use
 ARG TARGETARCH
