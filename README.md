@@ -8,6 +8,10 @@ See the [Github Workflow](.github/workflows/build-push.yml) for specifics on eac
 
 ## DevOps
 
+### Upstream images come through Artifactory
+
+Every `FROM` that names a public upstream image pulls it through `p6m.jfrog.io/p6m-dev-docker-remote/`, the Artifactory remote for Docker Hub, using the workflow's Artifactory login. Pulling straight from a public registry from GitHub runners hits anonymous rate limits (`toomanyrequests` from `public.ecr.aws`), which fails `base` legs and skips every job that needs them. Use the same prefix when adding an image: `p6m.jfrog.io/p6m-dev-docker-remote/library/<name>:<tag>` for Docker official images.
+
 ### Automated Security Patches
 
 - The GitHub Workflow Runs on a Weekly schedule

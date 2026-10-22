@@ -1,4 +1,4 @@
-FROM public.ecr.aws/ubuntu/ubuntu:noble
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/ubuntu:noble
 
 RUN apt-get update && apt-get install -y \
     acl \

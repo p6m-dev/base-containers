@@ -1,4 +1,4 @@
-FROM public.ecr.aws/ubuntu/ubuntu:noble AS upgraded
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/ubuntu:noble AS upgraded
 
 ARG CACHE_BUST
 ENV CACHE_BUST=${CACHE_BUST}
@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN debsums --silent --all --generate=missing && \
     cat /var/lib/dpkg/info/*.md5sums | sha256sum | cut -d' ' -f1 > /var/lib/dpkg/sha256sum
 
-FROM public.ecr.aws/ubuntu/ubuntu:noble AS final
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/ubuntu:noble AS final
 
 ENV TZ=UTC
 

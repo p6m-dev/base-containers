@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/alpine:3.18 as upgraded
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/alpine:3.18 AS upgraded
 
 ENV TZ=UTC
 
@@ -9,7 +9,7 @@ RUN apk update && apk upgrade --no-cache
 RUN mkdir -p /var/lib/apk/ && \
     apk info -vv | awk '/^\/[^\/]/{print $1}' | xargs sha256sum | sha256sum | cut -d ' ' -f 1 > /var/lib/apk/sha256sum
 
-FROM public.ecr.aws/docker/library/alpine:3.18 AS final
+FROM p6m.jfrog.io/p6m-dev-docker-remote/library/alpine:3.18 AS final
 
 # This will override the cache if any packages were upgraded
 COPY --from=upgraded /var/lib/apk/sha256sum /var/lib/apk/sha256sum
