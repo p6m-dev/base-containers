@@ -1,0 +1,167 @@
+name: Build Image
+
+# One image, built natively per architecture (no qemu) and merged into a multi-arch
+# manifest. Emulated arm64 broke a different image under every qemu tried: v10.2.3
+# segfaults bullseye's glibc postinst, v8.1.5 the bullseye base, and v9.2.2's tar fails
+# with "Cannot mkdir: Invalid argument" on noble (ede/nix, vscode).
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        type: string
+        required: true
+      version_tag:
+        type: string
+        required: true
+      dockerfile:
+        type: string
+        required: true
+      context:
+        type: string
+        required: true
+      variants:
+        type: string
+        default: "linux/amd64,linux/arm64"
+      build_args:
+        type: string
+        default: ""
+      artifactory_repo:
+        type: string
+        default: p6m-dev-docker
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every image builds amd64; arm64 only when the variants ask for it.
+        arch: ${{ fromJSON(contains(inputs.variants, 'linux/arm64') && '["amd64","arm64"]' || '["amd64"]') }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.name }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to Artifactory Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: p6m.jfrog.io
+          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
+      - name: Build and push by digest
+        id: build-push
+        uses: docker/build-push-action@v6
+        with:
+          file: ${{ inputs.dockerfile }}
+          context: ${{ inputs.context }}
+          build-args: |
+            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
+            ${{ inputs.build_args }}
+          platforms: linux/${{ matrix.arch }}
+          pull: true
+          tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.name }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ inputs.name }}-${{ inputs.version_tag }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.name }}-${{ inputs.version_tag }}-${{ matrix.arch }}
+      - name: Export digest
+        env:
+          DIGEST: ${{ steps.build-push.outputs.digest }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          touch "$RUNNER_TEMP/digests/${DIGEST#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          # Arch first, so merge can name the arches exactly: a trailing "-*" after
+          # python-3.10 would also pick up python-3.10-jammy's digests.
+          name: digests-${{ matrix.arch }}-${{ inputs.name }}-${{ inputs.version_tag }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-{amd64,arm64}-${{ inputs.name }}-${{ inputs.version_tag }}
+          merge-multiple: true
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ inputs.name }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.name }}
+            p6m.jfrog.io/${{ inputs.artifactory_repo }}/${{ inputs.name }}
+          tags: |
+            type=raw,value=${{ inputs.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ inputs.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha,prefix=${{ inputs.version_tag }}-
+            type=sha,prefix=${{ inputs.version_tag }}-,format=long
+            type=ref,event=pr,prefix=${{ inputs.version_tag }}-pr-
+            type=schedule,pattern=${{ inputs.version_tag }}-{{date 'YYYYMMDD'}}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to Artifactory Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: p6m.jfrog.io
+          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
+      - name: Create manifest list and push
+        id: manifest
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          SOURCE: ghcr.io/${{ github.repository_owner }}/${{ inputs.name }}
+        run: |
+          # shellcheck disable=SC2046 # word splitting builds the -t flags and source list
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf "$SOURCE@sha256:%s " *)
+          ref=$(jq -r '.tags[] | select(startswith("ghcr.io/"))' <<< "$DOCKER_METADATA_OUTPUT_JSON" | head -1)
+          echo "digest=$(docker buildx imagetools inspect "$ref" --format '{{json .Manifest}}' | jq -r .digest)" >> "$GITHUB_OUTPUT"
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.name }}
+          subject-digest: ${{ steps.manifest.outputs.digest }}
+          push-to-registry: true
+      - name: Record Summary
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          echo "### Docker Tags" >> "$GITHUB_STEP_SUMMARY"
+          echo "$TAGS" >> "$GITHUB_STEP_SUMMARY"

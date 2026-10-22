@@ -20,7 +20,6 @@ permissions:
 
 jobs:
   base: # This tier builds any os-specific containers
-    runs-on: ubuntu-latest
     strategy:
       max-parallel: 10
       fail-fast: false
@@ -81,79 +80,18 @@ jobs:
             dockerfile: 0-ede/nix/Dockerfile
             context: 0-ede/nix
             variants: "linux/amd64,linux/arm64"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ matrix.name }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-            p6m.jfrog.io/p6m-dev-docker/${{ vars.DOCKERHUB_USERNAME }}/${{ matrix.name }}
-          tags: |
-            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=sha,prefix=${{ matrix.version_tag }}-
-            type=sha,prefix=${{ matrix.version_tag }}-,format=long
-            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
-            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to Artifactory Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: p6m.jfrog.io
-          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
-      - name: Build and push
-        id: build-push
-        uses: docker/build-push-action@v6
-        with:
-          file: ${{ matrix.dockerfile }}
-          context: ${{ matrix.context }}
-          build-args: |
-            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
-          platforms: ${{ matrix.variants }}
-          pull: true
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-          subject-digest: ${{ steps.build-push.outputs.digest }}
-          push-to-registry: true
-      - name: Record Summary
-        run: |
-          echo "### Docker Tags" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+    uses: ./.github/workflows/build-image.yaml
+    secrets: inherit
+    with:
+      name: ${{ matrix.name }}
+      version_tag: ${{ matrix.version_tag }}
+      dockerfile: ${{ matrix.dockerfile }}
+      context: ${{ matrix.context }}
+      variants: ${{ matrix.variants }}
+      artifactory_repo: p6m-dev-docker/${{ vars.DOCKERHUB_USERNAME }}
   lang:
     needs:
       - base
-    runs-on: ubuntu-latest
     strategy:
       max-parallel: 10
       fail-fast: false
@@ -269,81 +207,19 @@ jobs:
             dockerfile: 1-golang/alpine3.17/Dockerfile
             context: 1-golang/alpine3.17
             version_arg: "" #unused
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ matrix.name }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-            p6m.jfrog.io/p6m-dev-docker/${{ matrix.name }}
-          tags: |
-            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=sha,prefix=${{ matrix.version_tag }}-
-            type=sha,prefix=${{ matrix.version_tag }}-,format=long
-            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
-            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to Artifactory Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: p6m.jfrog.io
-          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
-      - name: Build and push
-        id: build-push
-        uses: docker/build-push-action@v6
-        with:
-          file: ${{ matrix.dockerfile }}
-          context: ${{ matrix.context }}
-          build-args: |
-            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
-            VERSION=${{ matrix.version_arg }}
-          platforms: ${{ matrix.variants || 'linux/amd64,linux/arm64' }}
-          pull: true
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-          subject-digest: ${{ steps.build-push.outputs.digest }}
-          push-to-registry: true
-      - name: Record Summary
-        run: |
-          echo "### Docker Tags" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+    uses: ./.github/workflows/build-image.yaml
+    secrets: inherit
+    with:
+      name: ${{ matrix.name }}
+      version_tag: ${{ matrix.version_tag }}
+      dockerfile: ${{ matrix.dockerfile }}
+      context: ${{ matrix.context }}
+      build_args: |
+        VERSION=${{ matrix.version_arg }}
   app:
     needs:
       - base
       - lang
-    runs-on: ubuntu-latest
     strategy:
       max-parallel: 10
       fail-fast: false
@@ -477,75 +353,15 @@ jobs:
             builder_image_tag_arg: "" # unused
             image_tag_arg: "" # unused
             variants: "linux/amd64,linux/arm64"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ matrix.name }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-            p6m.jfrog.io/p6m-dev-docker/${{ matrix.name }}
-          tags: |
-            type=raw,value=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ matrix.version_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=sha,prefix=${{ matrix.version_tag }}-
-            type=sha,prefix=${{ matrix.version_tag }}-,format=long
-            type=ref,event=pr,prefix=${{ matrix.version_tag }}-pr-
-            type=schedule,pattern=${{ matrix.version_tag }}-{{date 'YYYYMMDD'}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          # Pinned: binfmt's `latest` tag is YEARS-stale qemu, whose glibc postinst segfaults on
-          # emulated arm64 (surfaced 2026-09-15 when the bullseye EOL fix made libc upgradeable
-          # again — nginx-bullseye died at 'libc-bin (--configure): exit status 139').
-          image: tonistiigi/binfmt:qemu-v9.2.2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to Artifactory Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: p6m.jfrog.io
-          username: ${{ secrets.P6M_ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.P6M_ARTIFACTORY_IDENTITY_TOKEN }}
-      - name: Build and push
-        id: build-push
-        uses: docker/build-push-action@v6
-        with:
-          file: ${{ matrix.dockerfile }}
-          context: ${{ matrix.context }}
-          build-args: |
-            REGISTRY_PREFIX=ghcr.io/${{ github.repository_owner }}
-            VERSION=${{ matrix.version_arg }}
-            BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
-            IMAGE_TAG=${{ matrix.image_tag_arg }}
-          platforms: ${{ matrix.variants }}
-          pull: true
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.version_tag }}
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
-          subject-digest: ${{ steps.build-push.outputs.digest }}
-          push-to-registry: true
-      - name: Record Summary
-        run: |
-          echo "### Docker Tags" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+    uses: ./.github/workflows/build-image.yaml
+    secrets: inherit
+    with:
+      name: ${{ matrix.name }}
+      version_tag: ${{ matrix.version_tag }}
+      dockerfile: ${{ matrix.dockerfile }}
+      context: ${{ matrix.context }}
+      variants: ${{ matrix.variants }}
+      build_args: |
+        VERSION=${{ matrix.version_arg }}
+        BUILDER_IMAGE_TAG=${{ matrix.builder_image_tag_arg }}
+        IMAGE_TAG=${{ matrix.image_tag_arg }}
