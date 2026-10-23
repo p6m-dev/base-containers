@@ -6,6 +6,30 @@ These images are published to [DockerHub](https://hub.docker.com) under the name
 
 See the [Github Workflow](.github/workflows/build-push.yml) for specifics on each type of container built.
 
+## Tags
+
+Each image is published with the same tags to Docker Hub (`ybor/<name>`), `ghcr.io/p6m-dev/<name>`, and Artifactory (`p6m.jfrog.io/p6m-dev-docker/ybor/<name>` for OS-specific images, `p6m.jfrog.io/p6m-dev-docker/<name>` for the rest). Every image is built for `linux/amd64` and `linux/arm64` except `github-runner`, which is `linux/amd64` only. The tags come from the `docker/metadata-action` step in [`build-image.yaml`](.github/workflows/build-image.yaml), where `<version>` is the matrix entry's `version_tag`:
+
+| Tag | Example | Moves? | Use it to |
+|-----|---------|--------|-----------|
+| `<version>` | `ybor/debian:trixie-slim` | Yes, on every build of `main`: push, weekly schedule, or manual run | Stay patched |
+| `<version>-<YYYYMMDD>` | `ybor/debian:trixie-slim-20261022` | No, once its build day has passed; a second `main` build on the same day replaces it | Pin a known build |
+| `<version>-<sha>` (7 or 40 characters) | `ybor/debian:trixie-slim-b40b340` | Yes, until the next commit lands: the weekly rebuild of an unchanged commit pushes a new image under the same tag | Trace an image to its commit; don't pin it |
+| `<version>-pr-<number>` | `ybor/debian:trixie-slim-pr-43` | Yes, on every push to the pull request | Test a pull request; never deploy it |
+
+The image digest (`ybor/debian@sha256:...`) is the only reference that never moves.
+
+OS-specific images have no `latest` tag, for the following reasons:
+
+- The version tag already is the moving "newest patched build" tag.
+- `latest` would cross OS major versions, such as trixie to forky, without review.
+- `latest` is ambiguous when one image has several variants; `ybor/debian` has bullseye, bookworm, and trixie, each full and slim.
+- In Kubernetes, an image tagged `latest` with no `imagePullPolicy` defaults to `Always`, so every pod start depends on the registry.
+
+A few images (such as `aws-cli` and `github-runner`) use `latest` as their `version_tag`; there it's that image's version tag and moves like any other.
+
+With the default `IfNotPresent` pull policy, a Kubernetes node keeps whichever build of a moving tag it pulled first, so weekly patches reach new nodes, not running ones. Pin a dated tag or digest when you need a known build.
+
 ## DevOps
 
 ### Upstream images come through Artifactory
