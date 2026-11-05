@@ -133,21 +133,6 @@ jobs:
             context: 1-nginx/bookworm
             version_arg: "1"
           - name: node
-            version_tag: 16-bullseye
-            dockerfile: 1-node/bullseye/Dockerfile
-            context: 1-node/bullseye
-            version_arg: "16"
-          - name: node
-            version_tag: 18-bullseye
-            dockerfile: 1-node/bullseye/Dockerfile
-            context: 1-node/bullseye
-            version_arg: "18"
-          - name: node
-            version_tag: 20-bullseye
-            dockerfile: 1-node/bullseye/Dockerfile
-            context: 1-node/bullseye
-            version_arg: "20"
-          - name: node
             version_tag: 22-bullseye
             dockerfile: 1-node/bullseye/Dockerfile
             context: 1-node/bullseye
